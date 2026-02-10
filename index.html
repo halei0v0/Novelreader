@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小说阅读器</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 头部导航 -->
+        <header class="header">
+            <div class="header-content">
+                <h1 class="logo">小说阅读器</h1>
+                <div class="header-controls">
+                    <button id="searchBtn" class="btn btn-icon" title="搜索">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                    <button id="themeToggle" class="btn btn-icon" title="切换主题">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69zM12 18c-.89 0-1.74-.2-2.5-.55C11.06 16.74 12 15.23 12 13.5s-.94-3.24-2.5-3.95c.76-.35 1.61-.55 2.5-.55 3.31 0 6 2.69 6 6s-2.69 6-6 6z"/>
+                        </svg>
+                    </button>
+                    <button id="settingsBtn" class="btn btn-icon" title="设置">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主内容区域 -->
+        <main class="main">
+            <!-- 小说列表 -->
+            <section id="novelList" class="novel-list">
+                <div class="section-header">
+                    <h2>小说列表</h2>
+                    <button id="refreshBtn" class="btn btn-small">刷新</button>
+                </div>
+                <div id="novelGrid" class="novel-grid">
+                    <!-- 小说卡片将通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <!-- 阅读器 -->
+            <section id="reader" class="reader hidden">
+                <div class="reader-header">
+                    <button id="backBtn" class="btn btn-icon" title="返回">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                        </svg>
+                    </button>
+                    <div class="novel-info">
+                        <h3 id="novelTitle" class="novel-title"></h3>
+                        <p id="chapterTitle" class="chapter-title"></p>
+                    </div>
+                    <div class="reader-controls">
+                        <button id="bookmarkBtn" class="btn btn-icon" title="书签">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/>
+                            </svg>
+                        </button>
+                        <button id="fullscreenBtn" class="btn btn-icon" title="全屏">
+                            <svg class="icon" viewBox="0 0 24 24">
+                                <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="reader-content">
+                    <!-- 章节导航 -->
+                    <nav id="chapterNav" class="chapter-nav">
+                        <div class="nav-header">
+                            <h4>章节目录</h4>
+                            <button id="closeNavBtn" class="btn btn-icon btn-small">
+                                <svg class="icon" viewBox="0 0 24 24">
+                                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <div id="chapterList" class="chapter-list">
+                            <!-- 章节列表将通过JavaScript动态生成 -->
+                        </div>
+                    </nav>
+
+                    <!-- 章节内容 -->
+                    <article id="chapterContent" class="chapter-content">
+                        <!-- 章节内容将通过JavaScript动态加载 -->
+                    </article>
+                </div>
+
+                <!-- 阅读控制栏 -->
+                <div class="reader-footer">
+                    <button id="prevChapter" class="btn btn-small">上一章</button>
+                    <div class="reading-progress">
+                        <span id="progressText">0%</span>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill"></div>
+                        </div>
+                    </div>
+                    <button id="nextChapter" class="btn btn-small">下一章</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- 搜索模态框 -->
+        <div id="searchModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>搜索小说</h3>
+                    <button id="closeSearchBtn" class="btn btn-icon">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="search-input">
+                        <input type="text" id="searchInput" placeholder="输入小说名称或作者...">
+                        <button id="searchSubmitBtn" class="btn btn-primary">搜索</button>
+                    </div>
+                    <div id="searchResults" class="search-results">
+                        <!-- 搜索结果将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置模态框 -->
+        <div id="settingsModal" class="modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>阅读设置</h3>
+                    <button id="closeSettingsBtn" class="btn btn-icon">
+                        <svg class="icon" viewBox="0 0 24 24">
+                            <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="setting-group">
+                        <label for="fontSize">字体大小</label>
+                        <input type="range" id="fontSize" min="12" max="24" value="16">
+                        <span id="fontSizeValue">16px</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="lineHeight">行间距</label>
+                        <input type="range" id="lineHeight" min="1.2" max="2.0" step="0.1" value="1.6">
+                        <span id="lineHeightValue">1.6</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="fontFamily">字体</label>
+                        <select id="fontFamily">
+                            <option value="system-ui">系统默认</option>
+                            <option value="'Microsoft YaHei', sans-serif">微软雅黑</option>
+                            <option value="'SimSun', serif">宋体</option>
+                            <option value="'KaiTi', serif">楷体</option>
+                            <option value="'FangSong', serif">仿宋</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="paragraphSpacing">段落间距</label>
+                        <input type="range" id="paragraphSpacing" min="0.5" max="2.0" step="0.1" value="1.0">
+                        <span id="paragraphSpacingValue">1.0</span>
+                    </div>
+                    <div class="setting-group">
+                        <label for="textAlign">对齐方式</label>
+                        <select id="textAlign">
+                            <option value="justify">两端对齐</option>
+                            <option value="left">左对齐</option>
+                            <option value="center">居中</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label for="textIndent">首行缩进</label>
+                        <select id="textIndent">
+                            <option value="2em">标准缩进</option>
+                            <option value="1.5em">较小缩进</option>
+                            <option value="0">无缩进</option>
+                        </select>
+                    </div>
+                    <div class="setting-group">
+                        <label>排版增强</label>
+                        <div class="checkbox-group">
+                            <label>
+                                <input type="checkbox" id="enableLigatures" checked>
+                                启用连字
+                            </label>
+                            <label>
+                                <input type="checkbox" id="enableKerning" checked>
+                                启用字距调整
+                            </label>
+                            <label>
+                                <input type="checkbox" id="enableSmoothFont" checked>
+                                字体平滑
+                            </label>
+                        </div>
+                    </div>
+                    <div class="setting-group">
+                        <label>主题</label>
+                        <div class="theme-options">
+                            <button class="theme-btn active" data-theme="light">日间</button>
+                            <button class="theme-btn" data-theme="dark">夜间</button>
+                            <button class="theme-btn" data-theme="sepia">护眼</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript模块 -->
+    <script src="js/storage.js"></script>
+    <script src="js/parser.js"></script>
+    <script src="js/reader.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
