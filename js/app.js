@@ -271,189 +271,74 @@ class NovelReaderApp {
     }
 
     /**
-     * 解码文件内容，自动检测编码
-     * @param {ArrayBuffer} arrayBuffer - 文件二进制数据
-     * @returns {Promise<string>} 解码后的文本
-     */
-    async decodeFileContent(arrayBuffer) {
-        const uint8Array = new Uint8Array(arrayBuffer);
-        
-        // 尝试检测编码
-        let encoding = 'utf-8';
-        
-        // 检查是否是 UTF-8 BOM
-        if (uint8Array.length >= 3 && 
-            uint8Array[0] === 0xEF && 
-            uint8Array[1] === 0xBB && 
-            uint8Array[2] === 0xBF) {
-            encoding = 'utf-8';
-        } else {
-            // 简单的编码检测：检查前1000字节
-            const sampleSize = Math.min(uint8Array.length, 1000);
-            let gbkScore = 0;
-            let utf8Score = 0;
-            
-            for (let i = 0; i < sampleSize; i++) {
-                const byte = uint8Array[i];
-                
-                // UTF-8 特征检测
-                if ((byte & 0xC0) === 0x80) {
-                    // 多字节字符的后续字节
-                    utf8Score++;
-                }
-                
-                // GBK 特征检测（高字节通常在 0x81-0xFE 范围）
-                if (byte >= 0x81 && byte <= 0xFE) {
-                    gbkScore += 2;
-                }
-                
-                // 检查 UTF-8 多字节序列
-                if ((byte & 0xE0) === 0xC0 && i + 1 < sampleSize) {
-                    if ((uint8Array[i + 1] & 0xC0) === 0x80) {
-                        utf8Score += 2;
-                        i++; // 跳过下一个字节
-                    }
-                } else if ((byte & 0xF0) === 0xE0 && i + 2 < sampleSize) {
-                    if ((uint8Array[i + 1] & 0xC0) === 0x80 && 
-                        (uint8Array[i + 2] & 0xC0) === 0x80) {
-                        utf8Score += 3;
-                        i += 2; // 跳过接下来的两个字节
-                    }
-                } else if ((byte & 0xF8) === 0xF0 && i + 3 < sampleSize) {
-                    if ((uint8Array[i + 1] & 0xC0) === 0x80 && 
-                        (uint8Array[i + 2] & 0xC0) === 0x80 && 
-                        (uint8Array[i + 3] & 0xC0) === 0x80) {
-                        utf8Score += 4;
-                        i += 3; // 跳过接下来的三个字节
-                    }
-                }
-            }
-            
-            // 根据得分判断编码
-            if (gbkScore > utf8Score) {
-                encoding = 'gbk';
-            }
-        }
-        
-        // 使用 TextDecoder 解码
-        try {
-            const decoder = new TextDecoder(encoding);
-            return decoder.decode(uint8Array);
-        } catch (error) {
-            console.warn(`使用 ${encoding} 解码失败，尝试 fallback`, error);
-            // Fallback: 尝试其他编码
-            const fallbackEncodings = ['gbk', 'gb18030', 'big5', 'utf-8'];
-            for (const enc of fallbackEncodings) {
-                try {
-                    const decoder = new TextDecoder(enc);
-                    const text = decoder.decode(uint8Array);
-                    // 检查解码结果是否包含过多乱码字符
-                    if (!this.hasTooManyGarbageChars(text)) {
-                        console.log(`成功使用 ${enc} 编码解码`);
-                        return text;
-                    }
-                } catch (e) {
-                    continue;
-                }
-            }
-            
-            // 最后的 fallback：使用 ISO-8859-1（不会失败，但可能有乱码）
-            const decoder = new TextDecoder('iso-8859-1');
-            return decoder.decode(uint8Array);
-        }
-    }
-
-    /**
-     * 检查文本是否包含过多乱码字符
-     * @param {string} text - 文本内容
-     * @returns {boolean} 是否包含过多乱码
-     */
-    hasTooManyGarbageChars(text) {
-        // 检查替换字符的比例
-        const replacementCharCount = (text.match(/\uFFFD/g) || []).length;
-        const totalLength = text.length;
-        
-        // 如果替换字符超过 1%，认为是乱码
-        if (totalLength > 0 && replacementCharCount / totalLength > 0.01) {
-            return true;
-        }
-        
-        // 检查不可打印字符的比例
-        let unprintableCount = 0;
-        for (let i = 0; i < Math.min(text.length, 1000); i++) {
-            const code = text.charCodeAt(i);
-            // ASCII 可打印范围：32-126
-            // 中文字符范围：19968-40869
-            if ((code < 32 || code > 126) && (code < 19968 || code > 40869)) {
-                unprintableCount++;
-            }
-        }
-        
-        // 如果不可打印字符超过 10%，认为是乱码
-        if (unprintableCount / Math.min(text.length, 1000) > 0.1) {
-            return true;
-        }
-        
-        return false;
-    }
-
-    /**
      * 扫描小说文件
      * @returns {Array} 文件列表
      */
     async scanNovelFiles() {
         const files = [];
         
-        // 直接尝试获取novel目录的HTML列表
-        try {
-            const dirResponse = await fetch('novel/', { 
-                method: 'GET',
-                cache: 'no-cache'
-            });
-            
-            if (dirResponse.ok) {
-                const dirText = await dirResponse.text();
-                console.log('成功获取目录列表，开始解析txt文件...');
+        // 常见的小说文件名列表
+        const commonNovelFiles = [
+            '十日终焉.txt',
+            '斗破苍穹.txt',
+            '完美世界.txt',
+            '遮天.txt',
+            '圣墟.txt',
+            '凡人修仙传.txt',
+            '仙逆.txt',
+            '我欲封天.txt',
+            '求魔.txt',
+            '一念永恒.txt'
+        ];
+        
+        // 尝试加载常见的小说文件
+        for (const filename of commonNovelFiles) {
+            try {
+                const response = await fetch(`novel/${filename}`, { 
+                    method: 'HEAD',
+                    cache: 'no-cache'
+                });
                 
-                // 解析HTML查找.txt文件
-                // 匹配各种可能的文件名格式，包括中文文件名
-                const txtMatches = dirText.match(/href="([^"]*\.txt)"/gi) || [];
-                
-                console.log(`从目录列表中发现 ${txtMatches.length} 个txt文件:`, txtMatches);
-                
-                for (const match of txtMatches) {
-                    // 提取文件名
-                    const filenameMatch = match.match(/href="([^"]+\.txt)"/i);
-                    if (filenameMatch) {
-                        let filename = filenameMatch[1];
-                        
-                        // 移除可能的URL编码路径
-                        filename = decodeURIComponent(filename);
-                        
-                        // 确保不包含路径
-                        filename = filename.split('/').pop();
-                        
-                        // 避免重复
+                if (response.ok) {
+                    console.log(`找到文件: ${filename}`);
+                    // 获取文件内容
+                    const contentResponse = await fetch(`novel/${filename}`);
+                    const content = await contentResponse.text();
+                    
+                    files.push({
+                        name: filename,
+                        content: content,
+                        size: content.length,
+                        lastModified: response.headers.get('last-modified') || Date.now()
+                    });
+                }
+            } catch (error) {
+                // 静默处理文件不存在的情况
+                console.debug(`文件不存在或无法访问: ${filename}`);
+            }
+        }
+        
+        // 如果没有找到任何文件，尝试通过多种方法获取
+        if (files.length === 0) {
+            // 方法1: 尝试获取目录列表
+            try {
+                const dirResponse = await fetch('novel/', { method: 'GET' });
+                if (dirResponse.ok) {
+                    const dirText = await dirResponse.text();
+                    // 解析HTML查找.txt文件
+                    const txtMatches = dirText.match(/[^"']*\.txt/gi) || [];
+                    
+                    for (const filename of txtMatches) {
                         if (!files.find(f => f.name === filename)) {
                             try {
-                                console.log(`正在加载文件: ${filename}`);
-                                const response = await fetch(`novel/${encodeURIComponent(filename)}`, { 
-                                    cache: 'no-cache'
-                                });
-                                
+                                const response = await fetch(`novel/${filename}`);
                                 if (response.ok) {
-                                    const arrayBuffer = await response.arrayBuffer();
-                                    const content = await this.decodeFileContent(arrayBuffer);
-                                    console.log(`成功加载文件: ${filename} (${content.length} 字符)`);
-                                    
+                                    const content = await response.text();
                                     files.push({
                                         name: filename,
                                         content: content,
-                                        size: content.length,
-                                        lastModified: response.headers.get('last-modified') || Date.now()
+                                        size: content.length
                                     });
-                                } else {
-                                    console.warn(`HTTP ${response.status}: 无法加载 ${filename}`);
                                 }
                             } catch (error) {
                                 console.warn(`无法加载文件: ${filename}`, error);
@@ -461,9 +346,45 @@ class NovelReaderApp {
                         }
                     }
                 }
+            } catch (error) {
+                console.debug('无法获取目录列表');
             }
-        } catch (error) {
-            console.warn('获取目录列表失败:', error);
+
+            // 方法2: 尝试常见的文件名模式
+            if (files.length === 0) {
+                const patterns = [
+                    '*.txt',
+                    '小说*.txt',
+                    '*小说.txt',
+                    'story*.txt',
+                    'novel*.txt'
+                ];
+                
+                // 这里我们无法直接使用通配符，但可以尝试一些常见的变体
+                const additionalFiles = [
+                    '小说.txt',
+                    'story.txt',
+                    'novel.txt',
+                    'test.txt'
+                ];
+                
+                for (const filename of additionalFiles) {
+                    try {
+                        const response = await fetch(`novel/${filename}`, { method: 'HEAD' });
+                        if (response.ok) {
+                            const contentResponse = await fetch(`novel/${filename}`);
+                            const content = await contentResponse.text();
+                            files.push({
+                                name: filename,
+                                content: content,
+                                size: content.length
+                            });
+                        }
+                    } catch (error) {
+                        // 忽略文件不存在的情况
+                    }
+                }
+            }
         }
         
         console.log(`扫描完成，找到 ${files.length} 个小说文件`);
