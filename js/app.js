@@ -278,25 +278,7 @@ class NovelReaderApp {
     async decodeFileContent(arrayBuffer) {
         const uint8Array = new Uint8Array(arrayBuffer);
         
-        // 优先尝试中文编码（GBK/GB18030），因为中文小说文件通常使用这些编码
-        const chineseEncodings = ['gb18030', 'gbk', 'gb2312', 'utf-8'];
-        
-        for (const encoding of chineseEncodings) {
-            try {
-                const decoder = new TextDecoder(encoding);
-                const text = decoder.decode(uint8Array);
-                
-                // 检查解码结果是否包含过多乱码字符
-                if (!this.hasTooManyGarbageChars(text)) {
-                    console.log(`成功使用 ${encoding} 编码解码文件`);
-                    return text;
-                }
-            } catch (error) {
-                continue;
-            }
-        }
-        
-        // 如果所有编码都失败，使用更详细的检测算法
+        // 尝试检测编码
         let encoding = 'utf-8';
         
         // 检查是否是 UTF-8 BOM
@@ -359,6 +341,22 @@ class NovelReaderApp {
             return decoder.decode(uint8Array);
         } catch (error) {
             console.warn(`使用 ${encoding} 解码失败，尝试 fallback`, error);
+            // Fallback: 尝试其他编码
+            const fallbackEncodings = ['gbk', 'gb18030', 'big5', 'utf-8'];
+            for (const enc of fallbackEncodings) {
+                try {
+                    const decoder = new TextDecoder(enc);
+                    const text = decoder.decode(uint8Array);
+                    // 检查解码结果是否包含过多乱码字符
+                    if (!this.hasTooManyGarbageChars(text)) {
+                        console.log(`成功使用 ${enc} 编码解码`);
+                        return text;
+                    }
+                } catch (e) {
+                    continue;
+                }
+            }
+            
             // 最后的 fallback：使用 ISO-8859-1（不会失败，但可能有乱码）
             const decoder = new TextDecoder('iso-8859-1');
             return decoder.decode(uint8Array);

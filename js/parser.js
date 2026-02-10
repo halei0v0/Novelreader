@@ -5,20 +5,13 @@
 class NovelParser {
     constructor() {
         // 修改正则表达式，支持"第X章"、"第X章 标题"、"第X卷"、"第X卷 标题"以及中文数字"第一章"、"第一卷"等格式
-        // 允许行首有全角空格（　）或半角空格
-        this.chapterRegex = /^[\s\u3000]*第([一二三四五六七八九十百千\d]+)(?:章|卷)(?:\s*(.+))?$/;
+        this.chapterRegex = /^第([一二三四五六七八九十百千\d]+)(?:章|卷)(?:\s*(.+))?$/;
         // 支持多种作者格式
         this.authorRegexList = [
             /^label_author(.+)$/,
             /^作者[:：](.+)$/
         ];
-        // 支持多种简介格式
-        this.summaryRegexList = [
-            /^简介[:：]\s*$/,
-            /^内容简介[:：]\s*$/,
-            /^作品简介[:：]\s*$/,
-            /^内容简介\s*$/
-        ];
+        this.summaryRegex = /^简介[:：]\s*$/;
         this.separatorRegex = /^={3,}$/;
         // 新增：支持书名格式
         this.titleRegex = /^书名[:：](.+)$/;
@@ -82,16 +75,11 @@ class NovelParser {
                 }
             }
 
-            // 解析简介（支持多种格式）
-            if (!novel.summary && !inSummary) {
-                for (const regex of this.summaryRegexList) {
-                    if (regex.test(line)) {
-                        inSummary = true;
-                        lineIndex++;
-                        break;
-                    }
-                }
-                if (inSummary) continue;
+            // 解析简介（支持"简介:"格式）
+            if (!novel.summary && this.summaryRegex.test(line)) {
+                inSummary = true;
+                lineIndex++;
+                continue;
             }
 
             if (inSummary) {
@@ -338,14 +326,9 @@ class NovelParser {
             }
 
             // 解析简介
-            if (!novel.summary && !inSummary) {
-                for (const regex of this.summaryRegexList) {
-                    if (regex.test(line)) {
-                        inSummary = true;
-                        break;
-                    }
-                }
-                if (inSummary) continue;
+            if (!novel.summary && this.summaryRegex.test(line)) {
+                inSummary = true;
+                continue;
             }
 
             if (inSummary) {
@@ -430,14 +413,9 @@ class NovelParser {
             }
 
             // 检查简介
-            if (!hasSummary) {
-                for (const regex of this.summaryRegexList) {
-                    if (regex.test(line)) {
-                        hasSummary = true;
-                        break;
-                    }
-                }
-                if (hasSummary) continue;
+            if (!hasSummary && this.summaryRegex.test(line)) {
+                hasSummary = true;
+                continue;
             }
 
             // 检查章节（支持"第X章"和"第X卷"格式）
