@@ -276,115 +276,136 @@ class NovelReaderApp {
      */
     async scanNovelFiles() {
         const files = [];
+        const discoveredFiles = new Set();
         
-        // 常见的小说文件名列表
-        const commonNovelFiles = [
-            '十日终焉.txt',
-            '斗破苍穹.txt',
-            '完美世界.txt',
-            '遮天.txt',
-            '圣墟.txt',
-            '凡人修仙传.txt',
-            '仙逆.txt',
-            '我欲封天.txt',
-            '求魔.txt',
-            '一念永恒.txt'
-        ];
+        console.log('开始扫描novel文件夹中的txt文件...');
         
-        // 尝试加载常见的小说文件
-        for (const filename of commonNovelFiles) {
+        // 方法1: 尝试获取目录列表以发现所有txt文件
+        try {
+            const dirResponse = await fetch('novel/', { method: 'GET' });
+            if (dirResponse.ok) {
+                const dirText = await dirResponse.text();
+                console.log('成功获取目录列表，开始解析txt文件...');
+                
+                // 使用多种正则表达式模式来查找txt文件
+                const patterns = [
+                    /href=["']([^"']*\.txt)["']/gi,  // HTML href属性中的txt文件
+                    /[^"'>\s]*\.txt/gi,               // 独立的txt文件名
+                    />([^<]*\.txt)</gi,               // HTML标签之间的txt文件名
+                    /"([^"]*\.txt)"/gi                // 双引号中的txt文件名
+                ];
+                
+                for (const pattern of patterns) {
+                    let match;
+                    while ((match = pattern.exec(dirText)) !== null) {
+                        const filename = match[1] || match[0];
+                        if (filename && filename.toLowerCase().endsWith('.txt')) {
+                            discoveredFiles.add(filename);
+                        }
+                    }
+                }
+                
+                console.log(`从目录列表中发现 ${discoveredFiles.size} 个txt文件:`, Array.from(discoveredFiles));
+            }
+        } catch (error) {
+            console.debug('无法获取目录列表，将使用备用方法');
+        }
+        
+        // 方法2: 如果目录列表方法失败或未找到文件，使用智能文件名探测
+        if (discoveredFiles.size === 0) {
+            console.log('使用智能文件名探测方法...');
+            
+            // 尝试加载当前已知的文件
+            const knownFiles = [
+                '十日终焉.txt',
+                '开局地摊卖大力.txt'
+            ];
+            
+            for (const filename of knownFiles) {
+                try {
+                    const response = await fetch(`novel/${filename}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        discoveredFiles.add(filename);
+                        console.log(`探测到已知文件: ${filename}`);
+                    }
+                } catch (error) {
+                    console.debug(`文件不存在: ${filename}`);
+                }
+            }
+            
+            // 尝试常见的中文小说文件名模式
+            const commonPatterns = [
+                '开局', '地摊', '大力', '十日', '终焉', '斗破', '苍穹', 
+                '完美', '世界', '遮天', '圣墟', '凡人', '修仙', '仙逆',
+                '我欲', '封天', '求魔', '一念', '永恒'
+            ];
+            
+            for (const pattern of commonPatterns) {
+                try {
+                    const filename = `${pattern}.txt`;
+                    const response = await fetch(`novel/${filename}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        discoveredFiles.add(filename);
+                        console.log(`探测到模式文件: ${filename}`);
+                    }
+                } catch (error) {
+                    // 忽略文件不存在的情况
+                }
+            }
+        }
+        
+        // 加载所有发现的文件
+        for (const filename of discoveredFiles) {
             try {
+                console.log(`正在加载文件: ${filename}`);
                 const response = await fetch(`novel/${filename}`, { 
-                    method: 'HEAD',
+                    method: 'GET',
                     cache: 'no-cache'
                 });
                 
                 if (response.ok) {
-                    console.log(`找到文件: ${filename}`);
-                    // 获取文件内容
-                    const contentResponse = await fetch(`novel/${filename}`);
-                    const content = await contentResponse.text();
+                    const content = await response.text();
                     
-                    files.push({
+                    // 提取文件信息
+                    const fileInfo = {
                         name: filename,
                         content: content,
                         size: content.length,
                         lastModified: response.headers.get('last-modified') || Date.now()
-                    });
+                    };
+                    
+                    files.push(fileInfo);
+                    console.log(`成功加载文件: ${filename} (${content.length} 字符)`);
+                } else {
+                    console.warn(`文件访问失败: ${filename} - 状态: ${response.status}`);
                 }
             } catch (error) {
-                // 静默处理文件不存在的情况
-                console.debug(`文件不存在或无法访问: ${filename}`);
+                console.error(`加载文件时出错: ${filename}`, error);
             }
         }
         
-        // 如果没有找到任何文件，尝试通过多种方法获取
+        // 如果仍然没有找到文件，创建一个示例文件用于测试
         if (files.length === 0) {
-            // 方法1: 尝试获取目录列表
-            try {
-                const dirResponse = await fetch('novel/', { method: 'GET' });
-                if (dirResponse.ok) {
-                    const dirText = await dirResponse.text();
-                    // 解析HTML查找.txt文件
-                    const txtMatches = dirText.match(/[^"']*\.txt/gi) || [];
-                    
-                    for (const filename of txtMatches) {
-                        if (!files.find(f => f.name === filename)) {
-                            try {
-                                const response = await fetch(`novel/${filename}`);
-                                if (response.ok) {
-                                    const content = await response.text();
-                                    files.push({
-                                        name: filename,
-                                        content: content,
-                                        size: content.length
-                                    });
-                                }
-                            } catch (error) {
-                                console.warn(`无法加载文件: ${filename}`, error);
-                            }
-                        }
-                    }
-                }
-            } catch (error) {
-                console.debug('无法获取目录列表');
-            }
+            console.warn('未找到任何txt文件，创建示例文件用于测试');
+            const sampleContent = `示例小说
 
-            // 方法2: 尝试常见的文件名模式
-            if (files.length === 0) {
-                const patterns = [
-                    '*.txt',
-                    '小说*.txt',
-                    '*小说.txt',
-                    'story*.txt',
-                    'novel*.txt'
-                ];
-                
-                // 这里我们无法直接使用通配符，但可以尝试一些常见的变体
-                const additionalFiles = [
-                    '小说.txt',
-                    'story.txt',
-                    'novel.txt',
-                    'test.txt'
-                ];
-                
-                for (const filename of additionalFiles) {
-                    try {
-                        const response = await fetch(`novel/${filename}`, { method: 'HEAD' });
-                        if (response.ok) {
-                            const contentResponse = await fetch(`novel/${filename}`);
-                            const content = await contentResponse.text();
-                            files.push({
-                                name: filename,
-                                content: content,
-                                size: content.length
-                            });
-                        }
-                    } catch (error) {
-                        // 忽略文件不存在的情况
-                    }
-                }
-            }
+作者: 未知
+
+简介:
+这是一个示例小说文件，用于测试阅读器功能。
+
+第一章 开始
+这是第一章的内容。
+
+第二章 继续
+这是第二章的内容。`;
+            
+            files.push({
+                name: '示例小说.txt',
+                content: sampleContent,
+                size: sampleContent.length,
+                lastModified: Date.now()
+            });
         }
         
         console.log(`扫描完成，找到 ${files.length} 个小说文件`);
