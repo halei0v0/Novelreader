@@ -30,15 +30,10 @@ class NovelParser {
             parseTime: Date.now()
         };
 
-        // 从文件名提取标题（去掉扩展名）
-        const baseTitle = filename.replace(/\.[^/.]+$/, '');
-        novel.title = baseTitle;
-
         let currentChapter = null;
         let inSummary = false;
         let summaryLines = [];
         let lineIndex = 0;
-        let foundValidContent = false;
 
         // 解析文件头部信息
         while (lineIndex < lines.length) {
@@ -49,215 +44,91 @@ class NovelParser {
                 continue;
             }
 
-            foundValidContent = true;
-
-            // 解析作者（多种格式）
-            if (!novel.author) {
-                const authorPatterns = [
-                    /^作者[：:]\s*(.+)$/,
-                    /^label_author(.+)$/,
-                    /^author[：:]\s*(.+)$/i,
-                    /^(.+)\s*著$/
-                ];
-                
-                for (const pattern of authorPatterns) {
-                    const match = pattern.exec(line);
-                    if (match) {
-                        novel.author = match[1].trim();
-                        break;
-                    }
-                }
-                
-                if (novel.author) {
-                    lineIndex++;
-                    continue;
-                }
+            // 解析标题
+            if (!novel.title) {
+                novel.title = line;
+                lineIndex++;
+                continue;
             }
 
-            // 解析简介（多种格式）
-            if (!novel.summary && !inSummary) {
-                const summaryPatterns = [
-                    /^简介[：:]?\s*$/,
-                    /^内容简介[：:]?\s*$/,
-                    /^介绍[：:]?\s*$/,
-                    /^summary[：:]?\s*$/i
-                ];
-                
-                for (const pattern of summaryPatterns) {
-                    if (pattern.test(line)) {
-                        inSummary = true;
-                        lineIndex++;
-                        break;
-                    }
-                }
-                
-                if (inSummary) continue;
+            // 解析作者
+            if (!novel.author && this.authorRegex.test(line)) {
+                novel.author = line.match(this.authorRegex)[1];
+                lineIndex++;
+                continue;
+            }
+
+            // 解析简介
+            if (!novel.summary && this.summaryRegex.test(line)) {
+                inSummary = true;
+                lineIndex++;
+                continue;
             }
 
             if (inSummary) {
-                if (this.separatorRegex.test(line) || /^第[一二三四五六七八九十\d]+章/.test(line)) {
+                if (this.separatorRegex.test(line)) {
+                    // 简介结束
                     novel.summary = summaryLines.join('\n').trim();
                     inSummary = false;
+                    lineIndex++;
+                    break;
                 } else {
                     summaryLines.push(line);
-                }
-                lineIndex++;
-                continue;
-            }
-
-            // 检查是否是章节标题（多种格式）
-            const chapterPatterns = [
-                /^第(\d+)章\s*(.+)$/,
-                /^第([一二三四五六七八九十百千万]+)章\s*(.+)$/,
-                /^(\d+)\.\s*(.+)$/,
-                /^章节[：:]?\s*(.+)$/,
-                /^(.+)\s*第[一二三四五六七八九十\d]+章/
-            ];
-            
-            let isChapterTitle = false;
-            for (const pattern of chapterPatterns) {
-                const match = pattern.exec(line);
-                if (match) {
-                    isChapterTitle = true;
-                    
-                    // 保存上一个章节
-                    if (currentChapter) {
-                        currentChapter.content = this.cleanContent(currentChapter.content);
-                        novel.chapters.push(currentChapter);
-                    }
-
-                    // 创建新章节
-                    let chapterNumber, chapterTitle;
-                    
-                    if (pattern === chapterPatterns[0]) {
-                        // 数字章节
-                        chapterNumber = parseInt(match[1]);
-                        chapterTitle = match[2];
-                    } else if (pattern === chapterPatterns[1]) {
-                        // 中文数字章节
-                        chapterNumber = this.chineseNumberToArabic(match[1]);
-                        chapterTitle = match[2];
-                    } else if (pattern === chapterPatterns[2]) {
-                        // 数字加点格式
-                        chapterNumber = parseInt(match[1]);
-                        chapterTitle = match[2];
-                    } else {
-                        // 其他格式
-                        chapterNumber = novel.chapters.length + 1;
-                        chapterTitle = match[1] || match[0];
-                    }
-                    
-                    currentChapter = {
-                        index: novel.chapters.length,
-                        number: chapterNumber,
-                        title: chapterTitle.trim(),
-                        content: '',
-                        wordCount: 0
-                    };
-                    break;
-                }
-            }
-
-            if (isChapterTitle) {
-                lineIndex++;
-                continue;
-            }
-
-            // 如果没有章节，添加到当前章节内容
-            if (currentChapter) {
-                if (line) {
-                    currentChapter.content += line + '\n';
-                    currentChapter.wordCount++;
-                }
-            } else {
-                // 如果还没有章节，创建默认章节
-                if (!novel.chapters.length && foundValidContent) {
-                    currentChapter = {
-                        index: 0,
-                        number: 1,
-                        title: '正文',
-                        content: '',
-                        wordCount: 0
-                    };
-                    
-                    if (line) {
-                        currentChapter.content += line + '\n';
-                        currentChapter.wordCount++;
-                    }
                 }
             }
 
             lineIndex++;
         }
 
-        // 如果简介未结束，将已收集的行作为简介
+        // 如果没有找到简介分隔符，将已收集的行作为简介
         if (inSummary && summaryLines.length > 0) {
             novel.summary = summaryLines.join('\n').trim();
         }
 
-        // 添加最后一个章节
-        if (currentChapter) {
-            currentChapter.content = this.cleanContent(currentChapter.content);
-            novel.chapters.push(currentChapter);
-        }
-
-        // 如果没有找到任何章节，尝试按段落分割
-        if (novel.chapters.length === 0 && foundValidContent) {
-            console.log('未找到标准章节格式，尝试按段落分割');
-            let chapterIndex = 0;
-            let currentChapterContent = [];
+        // 解析章节
+        while (lineIndex < lines.length) {
+            const line = lines[lineIndex].trim();
             
-            for (const line of lines) {
-                const trimmedLine = line.trim();
-                
-                if (trimmedLine) {
-                    currentChapterContent.push(trimmedLine);
-                    
-                    // 每3000个字符或遇到明显分隔符时创建一个新章节
-                    const totalLength = currentChapterContent.join('\n').length;
-                    if (totalLength > 3000 || /^=+|^[-+*]{3,}/.test(trimmedLine)) {
-                        const chapterContent = this.cleanContent(currentChapterContent.join('\n'));
-                        novel.chapters.push({
-                            index: chapterIndex,
-                            number: chapterIndex + 1,
-                            title: `第${chapterIndex + 1}节`,
-                            content: chapterContent,
-                            wordCount: chapterContent.split('\n').length
-                        });
-                        chapterIndex++;
-                        currentChapterContent = [];
-                    }
+            // 检查是否是章节标题
+            const chapterMatch = this.chapterRegex.exec(line);
+            if (chapterMatch) {
+                // 保存上一个章节
+                if (currentChapter) {
+                    novel.chapters.push(currentChapter);
+                }
+
+                // 创建新章节
+                currentChapter = {
+                    index: novel.chapters.length,
+                    number: parseInt(chapterMatch[1]),
+                    title: chapterMatch[2],
+                    content: '',
+                    wordCount: 0
+                };
+            } else if (currentChapter) {
+                // 添加章节内容
+                if (line) {
+                    currentChapter.content += line + '\n';
+                    currentChapter.wordCount++;
                 }
             }
-            
-            // 添加最后一章
-            if (currentChapterContent.length > 0) {
-                const chapterContent = this.cleanContent(currentChapterContent.join('\n'));
-                novel.chapters.push({
-                    index: chapterIndex,
-                    number: chapterIndex + 1,
-                    title: `第${chapterIndex + 1}节`,
-                    content: chapterContent,
-                    wordCount: chapterContent.split('\n').length
-                });
-            }
+
+            lineIndex++;
         }
 
-        // 如果仍然没有章节，创建一个默认章节包含所有内容
-        if (novel.chapters.length === 0) {
-            const cleanContent = this.cleanContent(content);
-            novel.chapters.push({
-                index: 0,
-                number: 1,
-                title: '正文',
-                content: cleanContent,
-                wordCount: cleanContent.split('\n').length
-            });
+        // 添加最后一个章节
+        if (currentChapter) {
+            novel.chapters.push(currentChapter);
         }
 
         // 计算统计信息
         novel.totalChapters = novel.chapters.length;
         novel.wordCount = novel.chapters.reduce((total, chapter) => total + chapter.wordCount, 0);
+
+        // 清理章节内容
+        novel.chapters.forEach(chapter => {
+            chapter.content = this.cleanContent(chapter.content);
+        });
 
         return novel;
     }
@@ -348,63 +219,35 @@ class NovelParser {
             parseTime: Date.now()
         };
 
-        // 从文件名提取标题（去掉扩展名）
-        const baseTitle = filename.replace(/\.[^/.]+$/, '');
-        novel.title = baseTitle;
-
         let inSummary = false;
         let summaryLines = [];
         let chapterIndex = 0;
-        let foundValidContent = false;
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
             
             if (!line) continue;
 
-            foundValidContent = true;
-
-            // 解析作者（多种格式）
-            if (!novel.author) {
-                const authorPatterns = [
-                    /^作者[：:]\s*(.+)$/,
-                    /^label_author(.+)$/,
-                    /^author[：:]\s*(.+)$/i,
-                    /^(.+)\s*著$/
-                ];
-                
-                for (const pattern of authorPatterns) {
-                    const match = pattern.exec(line);
-                    if (match) {
-                        novel.author = match[1].trim();
-                        break;
-                    }
-                }
-                
-                if (novel.author) continue;
+            // 解析标题
+            if (!novel.title) {
+                novel.title = line;
+                continue;
             }
 
-            // 解析简介（多种格式）
-            if (!novel.summary && !inSummary) {
-                const summaryPatterns = [
-                    /^简介[：:]?\s*$/,
-                    /^内容简介[：:]?\s*$/,
-                    /^介绍[：:]?\s*$/,
-                    /^summary[：:]?\s*$/i
-                ];
-                
-                for (const pattern of summaryPatterns) {
-                    if (pattern.test(line)) {
-                        inSummary = true;
-                        break;
-                    }
-                }
-                
-                if (inSummary) continue;
+            // 解析作者
+            if (!novel.author && this.authorRegex.test(line)) {
+                novel.author = line.match(this.authorRegex)[1];
+                continue;
+            }
+
+            // 解析简介
+            if (!novel.summary && this.summaryRegex.test(line)) {
+                inSummary = true;
+                continue;
             }
 
             if (inSummary) {
-                if (this.separatorRegex.test(line) || /^第[一二三四五六七八九十\d]+章/.test(line)) {
+                if (this.separatorRegex.test(line)) {
                     novel.summary = summaryLines.join('\n').trim();
                     inSummary = false;
                 } else {
@@ -413,100 +256,22 @@ class NovelParser {
                 continue;
             }
 
-            // 解析章节标题（多种格式）
-            const chapterPatterns = [
-                /^第(\d+)章\s*(.+)$/,
-                /^第([一二三四五六七八九十百千万]+)章\s*(.+)$/,
-                /^(\d+)\.\s*(.+)$/,
-                /^章节[：:]?\s*(.+)$/,
-                /^(.+)\s*第[一二三四五六七八九十\d]+章/
-            ];
-            
-            for (const pattern of chapterPatterns) {
-                const match = pattern.exec(line);
-                if (match) {
-                    let chapterNumber, chapterTitle;
-                    
-                    if (pattern === chapterPatterns[0]) {
-                        // 数字章节
-                        chapterNumber = parseInt(match[1]);
-                        chapterTitle = match[2];
-                    } else if (pattern === chapterPatterns[1]) {
-                        // 中文数字章节
-                        chapterNumber = this.chineseNumberToArabic(match[1]);
-                        chapterTitle = match[2];
-                    } else if (pattern === chapterPatterns[2]) {
-                        // 数字加点格式
-                        chapterNumber = parseInt(match[1]);
-                        chapterTitle = match[2];
-                    } else {
-                        // 其他格式
-                        chapterNumber = chapterIndex + 1;
-                        chapterTitle = match[1] || match[0];
-                    }
-                    
-                    novel.chapters.push({
-                        index: chapterIndex++,
-                        number: chapterNumber,
-                        title: chapterTitle.trim()
-                    });
-                    break;
-                }
-            }
-        }
-
-        // 如果简介未结束，将已收集的行作为简介
-        if (inSummary && summaryLines.length > 0) {
-            novel.summary = summaryLines.join('\n').trim();
-        }
-
-        // 如果没有找到任何章节，尝试按段落分割
-        if (novel.chapters.length === 0 && foundValidContent) {
-            console.log('未找到标准章节格式，尝试按段落分割');
-            let chapterIndex = 0;
-            let currentChapterContent = [];
-            
-            for (const line of lines) {
-                const trimmedLine = line.trim();
-                
-                if (trimmedLine) {
-                    currentChapterContent.push(trimmedLine);
-                    
-                    // 每1000个字符或遇到明显分隔符时创建一个新章节
-                    const totalLength = currentChapterContent.join('\n').length;
-                    if (totalLength > 3000 || /^=+|^[-+*]{3,}/.test(trimmedLine)) {
-                        novel.chapters.push({
-                            index: chapterIndex++,
-                            number: chapterIndex + 1,
-                            title: `第${chapterIndex + 1}节`
-                        });
-                        currentChapterContent = [];
-                    }
-                }
-            }
-            
-            // 添加最后一章
-            if (currentChapterContent.length > 0) {
+            // 解析章节标题
+            const chapterMatch = this.chapterRegex.exec(line);
+            if (chapterMatch) {
                 novel.chapters.push({
                     index: chapterIndex++,
-                    number: chapterIndex + 1,
-                    title: `第${chapterIndex + 1}节`
+                    number: parseInt(chapterMatch[1]),
+                    title: chapterMatch[2]
                 });
             }
         }
 
-        novel.totalChapters = novel.chapters.length;
-        
-        // 如果仍然没有章节，创建一个默认章节
-        if (novel.chapters.length === 0) {
-            novel.chapters.push({
-                index: 0,
-                number: 1,
-                title: '正文'
-            });
-            novel.totalChapters = 1;
+        if (inSummary && summaryLines.length > 0) {
+            novel.summary = summaryLines.join('\n').trim();
         }
-        
+
+        novel.totalChapters = novel.chapters.length;
         return novel;
     }
 
@@ -630,43 +395,6 @@ class NovelParser {
         if (end < content.length) context = context + '...';
         
         return context;
-    }
-
-    /**
-     * 中文数字转换为阿拉伯数字
-     * @param {string} chineseNum - 中文数字
-     * @returns {number} 阿拉伯数字
-     */
-    chineseNumberToArabic(chineseNum) {
-        const chineseNumbers = {
-            '零': 0, '一': 1, '二': 2, '三': 3, '四': 4,
-            '五': 5, '六': 6, '七': 7, '八': 8, '九': 9,
-            '十': 10, '百': 100, '千': 1000, '万': 10000
-        };
-        
-        let result = 0;
-        let temp = 0;
-        
-        for (let i = 0; i < chineseNum.length; i++) {
-            const char = chineseNum[i];
-            const num = chineseNumbers[char];
-            
-            if (num === undefined) continue;
-            
-            if (num === 10 || num === 100 || num === 1000) {
-                if (temp === 0) {
-                    temp = 1;
-                }
-                temp *= num;
-            } else if (num === 10000) {
-                result = (result + temp) * num;
-                temp = 0;
-            } else {
-                temp += num;
-            }
-        }
-        
-        return result + temp;
     }
 
     /**
