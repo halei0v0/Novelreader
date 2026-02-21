@@ -36,6 +36,17 @@
                 <div class="search-info" id="search-info"></div>
             </div>
 
+            <!-- 阅读历史 -->
+            <div id="reading-history" class="reading-history-container mb-4" style="display: none;">
+                <div class="history-header">
+                    <h3><span class="history-icon">📖</span>最近阅读</h3>
+                    <button class="clear-history-btn" onclick="clearHistory()">清空</button>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- 动态加载历史记录 -->
+                </div>
+            </div>
+
             <!-- 小说列表 -->
             <div id="novel-list" class="row g-4">
                 <!-- 动态加载小说卡片 -->

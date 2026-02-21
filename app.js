@@ -55,6 +55,9 @@ async function loadNovelList() {
     
     // 渲染小说列表
     renderNovelList(novelsMeta);
+    
+    // 加载阅读历史
+    loadReadingHistory();
 }
 
 // 渲染小说列表（用于显示搜索结果）
@@ -426,6 +429,124 @@ function saveReadingProgress() {
 function getReadingProgress(novelTitle) {
     const allProgress = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROGRESS) || '{}');
     return allProgress[novelTitle] || null;
+}
+
+// 加载阅读历史
+function loadReadingHistory() {
+    const allProgress = JSON.parse(localStorage.getItem(STORAGE_KEYS.PROGRESS) || '{}');
+    const historyContainer = document.getElementById('reading-history');
+    const historyList = document.getElementById('history-list');
+    
+    // 转换为数组并按时间戳降序排序
+    const historyArray = Object.entries(allProgress)
+        .map(([title, data]) => ({ title, ...data }))
+        .sort((a, b) => b.timestamp - a.timestamp);
+    
+    if (historyArray.length === 0) {
+        historyContainer.style.display = 'none';
+        return;
+    }
+    
+    // 只显示最近5条记录
+    const recentHistory = historyArray.slice(0, 5);
+    
+    // 找到每个小说的元数据
+    const historyItems = recentHistory.map(historyItem => {
+        const novelMeta = allNovelsMeta.find(n => n.title === historyItem.title);
+        if (!novelMeta) return null;
+        
+        const progressPercent = Math.round((historyItem.chapterIndex / novelMeta.chapters_count) * 100);
+        const timeStr = formatTime(historyItem.timestamp);
+        
+        return {
+            id: novelMeta.id,
+            title: historyItem.title,
+            author: novelMeta.author,
+            chapterIndex: historyItem.chapterIndex,
+            progressPercent: progressPercent,
+            timeStr: timeStr
+        };
+    }).filter(item => item !== null);
+    
+    if (historyItems.length === 0) {
+        historyContainer.style.display = 'none';
+        return;
+    }
+    
+    // 渲染历史记录
+    historyList.innerHTML = historyItems.map(item => `
+        <div class="history-item" onclick="jumpToHistoryNovel('${item.id}', ${item.chapterIndex})">
+            <div class="history-item-info">
+                <h4 class="history-item-title">${escapeHtml(item.title)}</h4>
+                <p class="history-item-author">作者：${escapeHtml(item.author)}</p>
+            </div>
+            <div class="history-item-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: ${item.progressPercent}%"></div>
+                </div>
+                <span class="progress-text">已读 ${item.progressPercent}% · ${item.timeStr}</span>
+            </div>
+        </div>
+    `).join('');
+    
+    historyContainer.style.display = 'block';
+}
+
+// 清空阅读历史
+function clearHistory() {
+    if (confirm('确定要清空所有阅读历史吗？')) {
+        localStorage.removeItem(STORAGE_KEYS.PROGRESS);
+        loadReadingHistory();
+        showToast('阅读历史已清空');
+    }
+}
+
+// 跳转到历史记录中的小说
+async function jumpToHistoryNovel(novelId, chapterIndex) {
+    // 加载小说完整数据
+    const novelData = await loadNovelData(novelId);
+    if (!novelData) {
+        alert('加载小说失败');
+        return;
+    }
+    
+    currentNovel = novelData;
+    currentChapterIndex = chapterIndex;
+    
+    // 保存当前小说信息到 sessionStorage
+    sessionStorage.setItem('currentNovel', JSON.stringify({
+        id: novelId,
+        chapterIndex: currentChapterIndex
+    }));
+    
+    // 跳转到阅读器页面
+    window.location.href = 'reader.html';
+}
+
+// 格式化时间
+function formatTime(timestamp) {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const week = 7 * day;
+    const month = 30 * day;
+    
+    if (diff < minute) {
+        return '刚刚';
+    } else if (diff < hour) {
+        return `${Math.floor(diff / minute)}分钟前`;
+    } else if (diff < day) {
+        return `${Math.floor(diff / hour)}小时前`;
+    } else if (diff < week) {
+        return `${Math.floor(diff / day)}天前`;
+    } else if (diff < month) {
+        return `${Math.floor(diff / week)}周前`;
+    } else {
+        const date = new Date(timestamp);
+        return `${date.getMonth() + 1}月${date.getDate()}日`;
+    }
 }
 
 // 自动保存进度
