@@ -100,13 +100,15 @@ Novelreader/
 | 十日终焉 | 未知作者 | 1359 |
 | 我不是戏神 | 未知作者 | 1798 |
 | 这个魔子不对劲 | 弈青锋 | 2627 |
+等
 
 ## 🌐 在线演示
 
 如果已部署到 GitHub Pages，可通过以下地址访问：
 ```
-https://你的用户名.github.io/novelreader/
+https://你的用户名.github.io/Novelreader/
 ```
+注意`Novelreader`是大写的N，不然会404
 
 ## 📝 开发计划
 
