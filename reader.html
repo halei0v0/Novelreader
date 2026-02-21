@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>阅读 - 小说阅读器</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container reader-mode" id="reader-container">
+        <!-- 顶部工具栏 -->
+        <nav class="navbar navbar-expand-lg reader-header" id="reader-header">
+            <div class="container-fluid">
+                <button class="btn btn-outline-light" onclick="goBack()">
+                    <span>← 返回</span>
+                </button>
+                <span class="navbar-title" id="novel-title">小说标题</span>
+                <button class="btn btn-outline-light" onclick="toggleSettings()">
+                    <span>⚙️ 设置</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- 章节标题 -->
+        <div class="chapter-header" id="chapter-header">
+            <h2 id="chapter-title">章节标题</h2>
+            <div class="chapter-info">
+                <span id="chapter-progress">第 1 章 / 共 0 章</span>
+            </div>
+        </div>
+
+        <!-- 正文内容 -->
+        <div class="reader-content" id="reader-content">
+            <!-- 章节内容动态加载 -->
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="reader-footer" id="reader-footer">
+            <div class="container">
+                <div class="row g-2">
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary w-100" onclick="prevChapter()">
+                            上一章
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-primary w-100" onclick="toggleTOC()">
+                            目录
+                        </button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-primary w-100" onclick="nextChapter()">
+                            下一章
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置面板 -->
+        <div class="settings-panel" id="settings-panel">
+            <div class="settings-content">
+                <div class="settings-header">
+                    <h3>阅读设置</h3>
+                    <button class="btn-close btn-close-white" onclick="toggleSettings()"></button>
+                </div>
+
+                <div class="settings-section">
+                    <label class="settings-label">主题</label>
+                    <div class="theme-options">
+                        <button class="theme-btn theme-light" onclick="setTheme('light')" data-theme="light">
+                            ☀️ 白天
+                        </button>
+                        <button class="theme-btn theme-sepia" onclick="setTheme('sepia')" data-theme="sepia">
+                            📖 护眼
+                        </button>
+                        <button class="theme-btn theme-dark" onclick="setTheme('dark')" data-theme="dark">
+                            🌙 夜间
+                        </button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <label class="settings-label">字体大小</label>
+                    <div class="font-size-options">
+                        <button class="font-size-btn" onclick="setFontSize(14)">小</button>
+                        <button class="font-size-btn" onclick="setFontSize(16)">中</button>
+                        <button class="font-size-btn" onclick="setFontSize(18)">大</button>
+                        <button class="font-size-btn" onclick="setFontSize(20)">特大</button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <label class="settings-label">行间距</label>
+                    <div class="line-height-options">
+                        <button class="line-height-btn" onclick="setLineHeight(1.5)">紧凑</button>
+                        <button class="line-height-btn" onclick="setLineHeight(1.8)">适中</button>
+                        <button class="line-height-btn" onclick="setLineHeight(2.0)">宽松</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 目录弹窗 -->
+        <div class="toc-modal" id="toc-modal">
+            <div class="toc-content">
+                <div class="toc-header">
+                    <h3>目录</h3>
+                    <button class="btn-close btn-close-white" onclick="toggleTOC()"></button>
+                </div>
+                <div class="toc-search">
+                    <input type="text" class="form-control" id="toc-search" placeholder="搜索章节..." oninput="filterChapters()">
+                </div>
+                <div class="toc-list" id="toc-list">
+                    <!-- 章节列表动态加载 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // 初始化阅读器
+        initReader();
+    </script>
+</body>
+</html>

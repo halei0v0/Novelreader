@@ -1,0 +1,584 @@
+/* 全局样式 */
+:root {
+    --primary-color: #4a90d9;
+    --success-color: #28a745;
+    --text-color: #333;
+    --bg-color: #fff;
+    --card-bg: #fff;
+    --reader-bg: #fff;
+    --reader-text: #333;
+    --border-color: #dee2e6;
+}
+
+/* 暗黑模式 */
+.theme-dark {
+    --primary-color: #6c757d;
+    --text-color: #e0e0e0;
+    --bg-color: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --reader-bg: #1a1a1a;
+    --reader-text: #e0e0e0;
+    --border-color: #404040;
+}
+
+/* 护眼模式 */
+.theme-sepia {
+    --primary-color: #8b6914;
+    --text-color: #4a4a4a;
+    --bg-color: #f4ecd8;
+    --card-bg: #fff;
+    --reader-bg: #f9f1e3;
+    --reader-text: #5c4b37;
+    --border-color: #d4c9b5;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.app-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 导航栏 */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.book-icon {
+    font-size: 1.5rem;
+}
+
+/* 主内容区 */
+.main-content {
+    flex: 1;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* 搜索框容器 */
+.search-container {
+    max-width: 600px;
+    margin: 0 auto 40px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    overflow: hidden;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.search-box:focus-within {
+    border-color: var(--primary-color);
+    box-shadow: 0 4px 12px rgba(74, 144, 217, 0.2);
+}
+
+.search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 20px;
+    font-size: 1rem;
+    color: var(--text-color);
+    outline: none;
+}
+
+.search-box input::placeholder {
+    color: #999;
+}
+
+.search-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: background 0.3s;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+}
+
+.search-btn:hover {
+    background: var(--success-color);
+}
+
+.search-btn:active {
+    transform: scale(0.95);
+}
+
+.search-info {
+    text-align: center;
+    color: #999;
+    font-size: 0.9rem;
+    margin-top: 8px;
+    height: 20px;
+    transition: all 0.3s;
+}
+
+.search-info.active {
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+/* 小说卡片 */
+.novel-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    border: 1px solid var(--border-color);
+    height: 100%;
+}
+
+.novel-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.novel-cover {
+    height: 180px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    position: relative;
+}
+
+.novel-cover::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(transparent, rgba(0,0,0,0.3));
+}
+
+.novel-info {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    height: calc(100% - 180px);
+}
+
+.novel-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-color);
+}
+
+.novel-author {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+}
+
+.novel-description {
+    color: #888;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+.novel-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    height: 45px;
+}
+
+.read-btn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    height: 36px;
+    min-width: 90px;
+}
+
+.read-btn:hover {
+    background: var(--success-color);
+}
+
+/* 阅读器模式 */
+.reader-mode {
+    background: var(--reader-bg);
+}
+
+.reader-header {
+    background: rgba(0,0,0,0.9);
+    backdrop-filter: blur(10px);
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: transform 0.3s;
+}
+
+.reader-header.hidden {
+    transform: translateY(-100%);
+}
+
+.navbar-title {
+    color: white;
+    font-weight: 600;
+    font-size: 1.1rem;
+    flex: 1;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding: 0 10px;
+}
+
+.chapter-header {
+    text-align: center;
+    padding: 30px 20px 20px;
+}
+
+.chapter-header h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--reader-text);
+}
+
+.chapter-info {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+/* 阅读内容区 */
+.reader-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px 20px 100px;
+    color: var(--reader-text);
+    line-height: 1.8;
+    font-size: 16px;
+}
+
+.reader-content p {
+    margin-bottom: 1.5em;
+    text-align: justify;
+    text-indent: 2em;
+}
+
+.reader-content p:first-child {
+    text-indent: 0;
+}
+
+/* 底部导航 */
+.reader-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-top: 1px solid var(--border-color);
+    padding: 10px 0;
+    z-index: 100;
+    transition: transform 0.3s;
+}
+
+.reader-footer.hidden {
+    transform: translateY(100%);
+}
+
+.theme-dark .reader-footer {
+    background: rgba(30,30,30,0.95);
+}
+
+/* 设置面板 */
+.settings-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 320px;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 200;
+    transform: translateX(100%);
+    transition: transform 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.settings-panel.active {
+    transform: translateX(0);
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.settings-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.settings-section {
+    margin-bottom: 25px;
+}
+
+.settings-label {
+    display: block;
+    color: rgba(255,255,255,0.8);
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.theme-options,
+.font-size-options,
+.line-height-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.theme-btn,
+.font-size-btn,
+.line-height-btn {
+    flex: 1;
+    min-width: 80px;
+    padding: 10px 15px;
+    border: 2px solid rgba(255,255,255,0.3);
+    background: transparent;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.theme-btn:hover,
+.font-size-btn:hover,
+.line-height-btn:hover {
+    border-color: rgba(255,255,255,0.6);
+    background: rgba(255,255,255,0.1);
+}
+
+.theme-btn.active,
+.font-size-btn.active,
+.line-height-btn.active {
+    border-color: var(--primary-color);
+    background: rgba(74, 144, 217, 0.2);
+}
+
+/* 目录弹窗 */
+.toc-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 200;
+    display: none;
+    overflow-y: auto;
+}
+
+.toc-modal.active {
+    display: block;
+}
+
+.toc-content {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.toc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.toc-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.toc-search input {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 12px 15px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 0.95rem;
+}
+
+.toc-search input::placeholder {
+    color: rgba(255,255,255,0.5);
+}
+
+.toc-search input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: rgba(255,255,255,0.15);
+}
+
+.toc-list {
+    margin-top: 20px;
+}
+
+.toc-item {
+    display: block;
+    padding: 12px 15px;
+    color: rgba(255,255,255,0.9);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.toc-item:hover {
+    background: rgba(255,255,255,0.1);
+    padding-left: 20px;
+}
+
+.toc-item.current {
+    background: rgba(74, 144, 217, 0.3);
+    color: white;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .novel-cover {
+        height: 160px;
+        font-size: 3rem;
+    }
+    
+    .novel-title {
+        font-size: 1.1rem;
+    }
+    
+    .chapter-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .reader-content {
+        padding: 15px 15px 80px;
+        font-size: 15px;
+    }
+    
+    .settings-panel {
+        width: 100%;
+    }
+    
+    .theme-btn,
+    .font-size-btn,
+    .line-height-btn {
+        min-width: 70px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* 加载动画 */
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.loading::after {
+    content: '...';
+    animation: dots 1.5s steps(4, end) infinite;
+}
+
+@keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60%, 100% { content: '...'; }
+}
+
+/* 滚动条美化 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(0,0,0,0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0,0,0,0.5);
+}
