@@ -103,7 +103,7 @@ def parse_novel_file(file_path):
             title_len = len(line_stripped)
             if title_len <= 50:
                 # 额外验证：避免误匹配包含大量标点或特殊字符的行
-                if not re.search(r'[。！？，、；：""''（）\[\]{}]{3,}', line_stripped):
+                if not re.search(r'[。！？，、；：""''（）\[\]\{\}]{3,}', line_stripped):
                     # 严格格式验证
                     if re.match(r'^第\s*[0-9零一二三四五六七八九十百千万]+\s*[章节集卷回部篇]\s*$', line_stripped) or \
                        re.match(r'^第\s*[0-9零一二三四五六七八九十百千万]+\s*[章节集卷回部篇]\s+[^\n]{1,20}$', line_stripped) or \
@@ -201,12 +201,13 @@ def auto_add_novels():
     # 解析新小说
     novels = []
     new_novels = []
+    used_ids = set()  # 跟踪本次运行中已使用的 ID
     
     for txt_file in txt_files:
         file_path = os.path.join(novel_dir, txt_file)
         novel_data = parse_novel_file(file_path)
         
-        # 检查是否已经存在
+        # 检查是否已经存在（通过标题匹配）
         novel_id = None
         for existing in existing_novels:
             if existing['title'] == novel_data['title']:
@@ -214,9 +215,11 @@ def auto_add_novels():
                 break
         
         if novel_id is None:
-            # 新小说，生成新的ID
+            # 新小说，生成新的 ID
             max_id = -1
-            for existing_id in existing_ids:
+            # 从现有 ID 和本次已使用的 ID 中找出最大值
+            all_ids = existing_ids | used_ids
+            for existing_id in all_ids:
                 if existing_id.startswith('novel_'):
                     try:
                         num = int(existing_id.replace('novel_', ''))
@@ -225,10 +228,12 @@ def auto_add_novels():
                         pass
             
             novel_id = f"novel_{max_id + 1}"
+            used_ids.add(novel_id)
             new_novels.append(novel_data['title'])
         else:
             # 已存在的小说，覆盖数据
             print(f"更新已有小说: {novel_data['title']} (ID: {novel_id})")
+            used_ids.add(novel_id)
         
         novels.append({
             'id': novel_id,
