@@ -286,6 +286,8 @@ body {
     cursor: pointer;
     border: 1px solid var(--border-color);
     height: 100%;
+    width: 100%;
+    max-width: 100%;
 }
 
 .novel-card:hover {
@@ -318,6 +320,8 @@ body {
     display: flex;
     flex-direction: column;
     height: calc(100% - 180px);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .novel-title {
@@ -325,6 +329,8 @@ body {
     font-weight: 700;
     margin-bottom: 8px;
     color: var(--text-color);
+    word-break: break-word;
+    max-width: 100%;
 }
 
 .novel-author {
@@ -403,7 +409,7 @@ body {
 
 .chapter-header {
     text-align: center;
-    padding: 30px 20px 20px;
+    padding: 30px 20px 10px;
 }
 
 .chapter-header h2 {
@@ -411,6 +417,19 @@ body {
     font-weight: 700;
     margin-bottom: 10px;
     color: var(--reader-text);
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* 正文中显示的章节标题样式 */
+.chapter-title-in-content {
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--reader-text);
+    padding: 5px 0 15px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .chapter-info {
@@ -426,12 +445,15 @@ body {
     color: var(--reader-text);
     line-height: 1.8;
     font-size: 16px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
 }
 
 .reader-content p {
     margin-bottom: 1.5em;
     text-align: justify;
     text-indent: 2em;
+    overflow-wrap: break-word;
 }
 
 .reader-content p:first-child {
@@ -627,6 +649,25 @@ body {
     color: white;
 }
 
+/* 目录中的卷标题样式 */
+.toc-item.toc-volume {
+    font-weight: 600;
+    color: var(--primary-color);
+    background: rgba(74, 144, 217, 0.1);
+    padding-left: 20px;
+}
+
+.toc-item.toc-volume:hover {
+    background: rgba(74, 144, 217, 0.2);
+    padding-left: 25px;
+}
+
+.toc-item.toc-volume.current {
+    background: rgba(74, 144, 217, 0.3);
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
     .page-header h1 {
@@ -646,9 +687,41 @@ body {
         font-size: 1.4rem;
     }
     
+    .chapter-title-in-content {
+        font-size: 1.3rem;
+        padding: 3px 0 12px;
+    }
+    
     .reader-content {
         padding: 15px 15px 80px;
         font-size: 15px;
+        /* 优化触摸体验 */
+        -webkit-tap-highlight-color: transparent;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    
+    /* 移动端头尾栏默认隐藏 */
+    .reader-header,
+    .reader-footer {
+        transform: translateY(-100%);
+    }
+    
+    .reader-footer {
+        transform: translateY(100%);
+    }
+    
+    /* 头尾栏显示状态 */
+    .reader-header:not(.hidden),
+    .reader-footer:not(.hidden) {
+        transform: translateY(0);
+    }
+    
+    /* 优化按钮触摸体验 */
+    .reader-header button,
+    .reader-footer button {
+        min-height: 44px;
+        min-width: 44px;
     }
     
     .settings-panel {
@@ -661,6 +734,14 @@ body {
         min-width: 70px;
         padding: 8px 12px;
         font-size: 0.85rem;
+    }
+    
+    .toc-item.toc-volume {
+        padding-left: 15px;
+    }
+    
+    .toc-item.toc-volume:hover {
+        padding-left: 20px;
     }
 }
 
@@ -698,4 +779,55 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
     background: rgba(0,0,0,0.5);
+}
+
+/* 加载提示框 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading-content {
+    text-align: center;
+    color: white;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 20px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text {
+    font-size: 1.1rem;
+    margin: 0;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
 }

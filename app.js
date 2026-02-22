@@ -155,48 +155,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// 显示加载提示
+function showLoading(text = '正在打开小说...') {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    const loadingText = document.querySelector('.loading-text');
+    if (loadingOverlay && loadingText) {
+        loadingText.textContent = text;
+        loadingOverlay.style.display = 'flex';
+    }
+}
+
+// 隐藏加载提示
+function hideLoading() {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.style.display = 'none';
+    }
+}
+
 // 打开小说
 async function openNovel(novelId) {
+    // 显示加载提示
+    showLoading('正在打开小说...');
+
     // 加载小说完整数据
     const novelData = await loadNovelData(novelId);
     if (!novelData) {
+        hideLoading();
         alert('加载小说失败');
         return;
     }
-    
+
     currentNovel = novelData;
     const progress = getReadingProgress(currentNovel.title);
     currentChapterIndex = progress ? progress.chapterIndex : 0;
-    
+
     // 保存当前小说信息到 sessionStorage
     sessionStorage.setItem('currentNovel', JSON.stringify({
         id: novelId,
         chapterIndex: currentChapterIndex
     }));
-    
-    // 跳转到阅读器页面
-    window.location.href = 'reader.html';
+
+    // 更新加载提示
+    showLoading('正在准备阅读页面...');
+
+    // 延迟一下，让用户看到加载提示
+    setTimeout(() => {
+        // 跳转到阅读器页面
+        window.location.href = 'reader.html';
+    }, 300);
 }
 
 // 初始化阅读器
 async function initReader() {
+    // 显示加载提示
+    showLoading('正在加载小说数据...');
+
     // 获取当前小说信息
     const savedInfo = sessionStorage.getItem('currentNovel');
     if (!savedInfo) {
+        hideLoading();
         window.location.href = 'index.html';
         return;
     }
 
     const info = JSON.parse(savedInfo);
-    
+
     // 加载小说完整数据
     const novelData = await loadNovelData(info.id);
     if (!novelData) {
+        hideLoading();
         alert('加载小说失败');
         window.location.href = 'index.html';
         return;
     }
-    
+
     currentNovel = novelData;
     currentChapterIndex = info.chapterIndex;
 
@@ -215,8 +248,20 @@ async function initReader() {
     // 自动保存进度
     setupAutoSave();
 
-    // 滚动事件处理
+    // 滚动和触摸事件处理
     setupScrollHandler();
+
+    // 移动端头尾栏默认隐藏
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+        const header = document.getElementById('reader-header');
+        const footer = document.getElementById('reader-footer');
+        header.classList.add('hidden');
+        footer.classList.add('hidden');
+    }
+
+    // 隐藏加载提示
+    hideLoading();
 }
 
 // 加载章节
@@ -228,17 +273,52 @@ function loadChapter(index) {
     currentChapterIndex = index;
     const chapter = currentNovel.chapters[index];
 
-    // 更新标题
+    // 检测是否为卷标题（content 为空或 title 包含"卷"）
+    const isVolume = !chapter.content.trim() || chapter.title.includes('卷');
+    
+    // 如果是卷标题，自动跳转到下一个有内容的章节
+    if (isVolume) {
+        let nextIndex = index + 1;
+        while (nextIndex < currentNovel.chapters.length) {
+            const nextChapter = currentNovel.chapters[nextIndex];
+            if (nextChapter.content.trim()) {
+                loadChapter(nextIndex);
+                return;
+            }
+            nextIndex++;
+        }
+        // 如果没有找到有内容的章节，就不跳转
+    }
+
+    // 查找所属的卷标题（向前查找第一个卷标题）
+    let volumeTitle = '';
+    for (let i = index - 1; i >= 0; i--) {
+        const prevChapter = currentNovel.chapters[i];
+        if (!prevChapter.content.trim() || prevChapter.title.includes('卷')) {
+            volumeTitle = prevChapter.title;
+            break;
+        }
+    }
+    
+    // 更新顶部标题显示卷标题
     document.getElementById('novel-title').textContent = currentNovel.title;
-    document.getElementById('chapter-title').textContent = chapter.title;
+    document.getElementById('chapter-title').textContent = volumeTitle || chapter.title;
     document.getElementById('chapter-progress').textContent = `第 ${index + 1} 章 / 共 ${currentNovel.chapters.length} 章`;
 
     // 更新内容
     const contentDiv = document.getElementById('reader-content');
     
-    // 将章节内容按段落分割
+    // 构建内容HTML，在正文前显示章节标题
+    let htmlContent = '';
+    
+    // 如果有卷标题，在正文前显示章节标题
+    if (volumeTitle) {
+        htmlContent += `<div class="chapter-title-in-content">${escapeHtml(chapter.title)}</div>`;
+    }
+    
+    // 添加章节正文
     const paragraphs = chapter.content.split('\n').filter(p => p.trim());
-    const htmlContent = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
+    htmlContent += paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
     
     contentDiv.innerHTML = htmlContent;
 
@@ -255,7 +335,17 @@ function loadChapter(index) {
 // 上一章
 function prevChapter() {
     if (currentChapterIndex > 0) {
-        loadChapter(currentChapterIndex - 1);
+        let prevIndex = currentChapterIndex - 1;
+        // 向前查找第一个有内容的章节
+        while (prevIndex >= 0) {
+            const prevChapter = currentNovel.chapters[prevIndex];
+            if (prevChapter.content.trim()) {
+                loadChapter(prevIndex);
+                return;
+            }
+            prevIndex--;
+        }
+        showToast('已经是第一章了');
     } else {
         showToast('已经是第一章了');
     }
@@ -264,7 +354,17 @@ function prevChapter() {
 // 下一章
 function nextChapter() {
     if (currentChapterIndex < currentNovel.chapters.length - 1) {
-        loadChapter(currentChapterIndex + 1);
+        let nextIndex = currentChapterIndex + 1;
+        // 向后查找第一个有内容的章节
+        while (nextIndex < currentNovel.chapters.length) {
+            const nextChapter = currentNovel.chapters[nextIndex];
+            if (nextChapter.content.trim()) {
+                loadChapter(nextIndex);
+                return;
+            }
+            nextIndex++;
+        }
+        showToast('已经是最后一章了');
     } else {
         showToast('已经是最后一章了');
     }
@@ -273,11 +373,17 @@ function nextChapter() {
 // 加载目录
 function loadTOC() {
     const tocList = document.getElementById('toc-list');
-    tocList.innerHTML = currentNovel.chapters.map((chapter, index) => `
-        <div class="toc-item" data-index="${index}" onclick="jumpToChapter(${index})">
-            ${escapeHtml(chapter.title)}
-        </div>
-    `).join('');
+    tocList.innerHTML = currentNovel.chapters.map((chapter, index) => {
+        // 检测是否为卷标题
+        const isVolume = !chapter.content.trim() || chapter.title.includes('卷');
+        const className = isVolume ? 'toc-item toc-volume' : 'toc-item';
+        
+        return `
+            <div class="${className}" data-index="${index}" onclick="jumpToChapter(${index})">
+                ${escapeHtml(chapter.title)}
+            </div>
+        `;
+    }).join('');
 }
 
 // 过滤章节
@@ -317,12 +423,30 @@ function updateTOCHighlight() {
 function toggleTOC() {
     const tocModal = document.getElementById('toc-modal');
     tocModal.classList.toggle('active');
+    
+    // 移动端：打开目录时显示头尾栏
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile && tocModal.classList.contains('active')) {
+        const header = document.getElementById('reader-header');
+        const footer = document.getElementById('reader-footer');
+        header.classList.remove('hidden');
+        footer.classList.remove('hidden');
+    }
 }
 
 // 切换设置面板
 function toggleSettings() {
     const settingsPanel = document.getElementById('settings-panel');
     settingsPanel.classList.toggle('active');
+    
+    // 移动端：打开设置时显示头尾栏
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile && settingsPanel.classList.contains('active')) {
+        const header = document.getElementById('reader-header');
+        const footer = document.getElementById('reader-footer');
+        header.classList.remove('hidden');
+        footer.classList.remove('hidden');
+    }
 }
 
 // 设置主题
@@ -560,44 +684,118 @@ function setupAutoSave() {
     });
 }
 
-// 滚动处理
+// 滚动和触摸处理
 function setupScrollHandler() {
     const header = document.getElementById('reader-header');
     const footer = document.getElementById('reader-footer');
-    let lastScrollY = window.scrollY;
-    let scrollTimeout;
-
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        
-        const currentScrollY = window.scrollY;
-        const isScrollingDown = currentScrollY > lastScrollY;
-        
-        // 页面顶部和底部时始终显示
-        const isNearTop = currentScrollY < 100;
-        const isNearBottom = currentScrollY + window.innerHeight >= document.body.scrollHeight - 100;
-        
-        if (isNearTop || isNearBottom) {
-            header.classList.remove('hidden');
-            footer.classList.remove('hidden');
-        } else if (isScrollingDown) {
-            header.classList.add('hidden');
-            footer.classList.remove('hidden');
-        } else {
-            header.classList.remove('hidden');
-            footer.classList.add('hidden');
-        }
-        
-        lastScrollY = currentScrollY;
-        
-        // 防抖处理
-        scrollTimeout = setTimeout(() => {
-            if (isNearBottom && currentChapterIndex < currentNovel.chapters.length - 1) {
-                // 自动进入下一章（可选功能，可根据需要开启）
-                // nextChapter();
+    const readerContent = document.getElementById('reader-content');
+    
+    // 滑动相关变量
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+    const minSwipeDistance = 50; // 最小滑动距离
+    
+    // 检测是否为移动设备
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // 移动端：点击中间区域显示/隐藏头尾栏，左右区域点击翻页
+        readerContent.addEventListener('click', (e) => {
+            const clickX = e.clientX;
+            const screenWidth = window.innerWidth;
+            
+            // 判断点击区域
+            const leftZone = screenWidth * 0.25; // 左侧 25%
+            const rightZone = screenWidth * 0.75; // 右侧 75%
+            
+            if (clickX < leftZone) {
+                // 点击左侧区域：向前翻页
+                prevChapter();
+                // 翻页后隐藏头尾栏
+                hideHeaderFooter();
+            } else if (clickX > rightZone) {
+                // 点击右侧区域：向后翻页
+                nextChapter();
+                // 翻页后隐藏头尾栏
+                hideHeaderFooter();
+            } else {
+                // 点击中间区域：显示/隐藏头尾栏
+                toggleHeaderFooter();
             }
-        }, 300);
-    });
+        });
+        
+        // 移动端：滑动翻页
+        readerContent.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, false);
+        
+        readerContent.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, false);
+        
+        function handleSwipe() {
+            const diffX = touchEndX - touchStartX;
+            const diffY = touchEndY - touchStartY;
+            
+            // 只有水平滑动距离大于最小距离，且垂直滑动距离小于水平滑动距离时才触发
+            if (Math.abs(diffX) > minSwipeDistance && Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX > 0) {
+                    // 向右滑动：向前翻页
+                    prevChapter();
+                } else {
+                    // 向左滑动：向后翻页
+                    nextChapter();
+                }
+                // 滑动翻页后隐藏头尾栏
+                hideHeaderFooter();
+            }
+        }
+    } else {
+        // PC端：保持原有的滚动显示/隐藏逻辑
+        let lastScrollY = window.scrollY;
+        let scrollTimeout;
+
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            
+            const currentScrollY = window.scrollY;
+            const isScrollingDown = currentScrollY > lastScrollY;
+            
+            // 页面顶部和底部时始终显示
+            const isNearTop = currentScrollY < 100;
+            const isNearBottom = currentScrollY + window.innerHeight >= document.body.scrollHeight - 100;
+            
+            if (isNearTop || isNearBottom) {
+                header.classList.remove('hidden');
+                footer.classList.remove('hidden');
+            } else if (isScrollingDown) {
+                header.classList.add('hidden');
+                footer.classList.remove('hidden');
+            } else {
+                header.classList.remove('hidden');
+                footer.classList.add('hidden');
+            }
+            
+            lastScrollY = currentScrollY;
+        });
+    }
+    
+    // 显示/隐藏头尾栏
+    function toggleHeaderFooter() {
+        header.classList.toggle('hidden');
+        footer.classList.toggle('hidden');
+    }
+    
+    // 隐藏头尾栏
+    function hideHeaderFooter() {
+        header.classList.add('hidden');
+        footer.classList.add('hidden');
+    }
 }
 
 // 返回首页
