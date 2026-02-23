@@ -300,10 +300,23 @@ function loadChapter(index) {
         }
     }
     
+    // 计算实际章节编号（排除卷标题）
+    let actualChapterNum = 0;
+    let totalContentChapters = 0;
+    for (let i = 0; i < currentNovel.chapters.length; i++) {
+        const ch = currentNovel.chapters[i];
+        if (ch.content.trim()) {
+            totalContentChapters++;
+            if (i <= index) {
+                actualChapterNum++;
+            }
+        }
+    }
+    
     // 更新顶部标题显示卷标题
     document.getElementById('novel-title').textContent = currentNovel.title;
     document.getElementById('chapter-title').textContent = volumeTitle || chapter.title;
-    document.getElementById('chapter-progress').textContent = `第 ${index + 1} 章 / 共 ${currentNovel.chapters.length} 章`;
+    document.getElementById('chapter-progress').textContent = `第 ${actualChapterNum} 章 / 共 ${totalContentChapters} 章`;
 
     // 更新内容
     const contentDiv = document.getElementById('reader-content');
