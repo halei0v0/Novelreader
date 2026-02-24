@@ -4,6 +4,10 @@ let allNovelsMeta = null; // 存储所有小说元数据用于搜索
 let currentNovel = null;
 let currentChapterIndex = 0;
 
+// 章节块缓存（用于按需加载）
+let chapterCache = {};  // { novelId: { chunkIndex: chaptersData } }
+let chunkSize = 100;  // 每个块的章节数
+
 // 阅读设置
 let readerSettings = {
     theme: 'light',
@@ -15,8 +19,37 @@ let readerSettings = {
 const STORAGE_KEYS = {
     NOVELS: 'novelreader_novels',
     PROGRESS: 'novelreader_progress',
-    SETTINGS: 'novelreader_settings'
+    SETTINGS: 'novelreader_settings',
+    BOOKMARKS: 'novelreader_bookmarks'
 };
+
+// 显示加载进度条
+function showProgressBar() {
+    const progressBar = document.getElementById('chapter-progress-bar');
+    if (progressBar) {
+        progressBar.style.width = '0%';
+        progressBar.style.opacity = '1';
+    }
+}
+
+// 更新加载进度
+function updateProgressBar(percent) {
+    const progressBar = document.getElementById('chapter-progress-bar');
+    if (progressBar) {
+        progressBar.style.width = `${percent}%`;
+    }
+}
+
+// 隐藏加载进度条
+function hideProgressBar() {
+    const progressBar = document.getElementById('chapter-progress-bar');
+    if (progressBar) {
+        progressBar.style.opacity = '0';
+        setTimeout(() => {
+            progressBar.style.width = '0%';
+        }, 300);
+    }
+}
 
 // 加载小说列表
 async function loadNovelsMeta() {
@@ -30,16 +63,54 @@ async function loadNovelsMeta() {
     }
 }
 
-// 加载小说完整数据
-async function loadNovelData(novelId) {
+// 加载小说元数据（不含章节内容）
+async function loadNovelMeta(novelId) {
     try {
-        const response = await fetch(`data/${novelId}.json`);
-        const novelData = await response.json();
-        return novelData;
+        const response = await fetch(`data/${novelId}/meta.json`);
+        const meta = await response.json();
+        return meta;
     } catch (error) {
-        console.error('加载小说数据失败:', error);
+        console.error('加载小说元数据失败:', error);
         return null;
     }
+}
+
+// 加载章节内容块（按需加载）
+async function loadChapterChunk(novelId, chunkIndex) {
+    // 检查缓存
+    if (!chapterCache[novelId]) {
+        chapterCache[novelId] = {};
+    }
+    
+    if (chapterCache[novelId][chunkIndex]) {
+        return chapterCache[novelId][chunkIndex];
+    }
+    
+    try {
+        const response = await fetch(`data/${novelId}/chunk_${chunkIndex}.json`);
+        const chunkData = await response.json();
+        
+        // 缓存数据
+        chapterCache[novelId][chunkIndex] = chunkData.chapters;
+        
+        return chunkData.chapters;
+    } catch (error) {
+        console.error('加载章节块失败:', error);
+        return null;
+    }
+}
+
+// 加载单个章节内容
+async function loadChapterContent(novelId, chapterIndex) {
+    const chunkIndex = Math.floor(chapterIndex / chunkSize);
+    const chapters = await loadChapterChunk(novelId, chunkIndex);
+    
+    if (!chapters) {
+        return null;
+    }
+    
+    const localIndex = chapterIndex % chunkSize;
+    return chapters[localIndex];
 }
 
 // 加载小说列表页面
@@ -63,16 +134,20 @@ async function loadNovelList() {
 // 渲染小说列表（用于显示搜索结果）
 function renderNovelList(novelsMeta) {
     const container = document.getElementById('novel-list');
-    
+    const countElement = document.getElementById('novel-count');
+
+    // 更新小说计数
+    countElement.textContent = `共收录 ${novelsMeta.length} 本小说`;
+
     if (novelsMeta.length === 0) {
         container.innerHTML = '<div class="col-12 text-center py-5"><p class="text-muted">没有找到匹配的小说</p></div>';
         return;
     }
-    
+
     container.innerHTML = novelsMeta.map((novel) => {
         const progress = getReadingProgress(novel.title);
         const progressPercent = progress ? Math.round((progress.chapterIndex / novel.chapters_count) * 100) : 0;
-        
+
         return `
             <div class="col-md-6 col-lg-4">
                 <div class="novel-card" onclick="openNovel('${novel.id}')">
@@ -176,17 +251,17 @@ function hideLoading() {
 // 打开小说
 async function openNovel(novelId) {
     // 显示加载提示
-    showLoading('正在打开小说...');
+    showLoading('正在加载小说信息...');
 
-    // 加载小说完整数据
-    const novelData = await loadNovelData(novelId);
-    if (!novelData) {
+    // 加载小说元数据
+    const novelMeta = await loadNovelMeta(novelId);
+    if (!novelMeta) {
         hideLoading();
         alert('加载小说失败');
         return;
     }
 
-    currentNovel = novelData;
+    currentNovel = novelMeta;
     const progress = getReadingProgress(currentNovel.title);
     currentChapterIndex = progress ? progress.chapterIndex : 0;
 
@@ -197,19 +272,18 @@ async function openNovel(novelId) {
     }));
 
     // 更新加载提示
-    showLoading('正在准备阅读页面...');
+    showLoading('正在跳转...');
 
-    // 延迟一下，让用户看到加载提示
+    // 跳转到阅读器页面
     setTimeout(() => {
-        // 跳转到阅读器页面
         window.location.href = 'reader.html';
-    }, 300);
+    }, 200);
 }
 
 // 初始化阅读器
 async function initReader() {
     // 显示加载提示
-    showLoading('正在加载小说数据...');
+    showLoading('正在加载小说信息...');
 
     // 获取当前小说信息
     const savedInfo = sessionStorage.getItem('currentNovel');
@@ -221,16 +295,16 @@ async function initReader() {
 
     const info = JSON.parse(savedInfo);
 
-    // 加载小说完整数据
-    const novelData = await loadNovelData(info.id);
-    if (!novelData) {
+    // 加载小说元数据
+    const novelMeta = await loadNovelMeta(info.id);
+    if (!novelMeta) {
         hideLoading();
         alert('加载小说失败');
         window.location.href = 'index.html';
         return;
     }
 
-    currentNovel = novelData;
+    currentNovel = novelMeta;
     currentChapterIndex = info.chapterIndex;
 
     // 加载阅读设置
@@ -239,8 +313,13 @@ async function initReader() {
     // 应用设置
     applySettings();
 
+    // 预加载当前章节块
+    showLoading('正在加载章节...');
+    const chunkIndex = Math.floor(currentChapterIndex / chunkSize);
+    await loadChapterChunk(info.id, chunkIndex);
+
     // 加载当前章节
-    loadChapter(currentChapterIndex);
+    await loadChapter(currentChapterIndex);
 
     // 加载目录
     loadTOC();
@@ -252,7 +331,7 @@ async function initReader() {
     setupScrollHandler();
 
     // 移动端头尾栏默认隐藏
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
     if (isMobile) {
         const header = document.getElementById('reader-header');
         const footer = document.getElementById('reader-footer');
@@ -265,37 +344,53 @@ async function initReader() {
 }
 
 // 加载章节
-function loadChapter(index) {
-    if (index < 0 || index >= currentNovel.chapters.length) {
+async function loadChapter(index) {
+    if (index < 0 || index >= currentNovel.chapters_count) {
         return;
     }
 
     currentChapterIndex = index;
-    const chapter = currentNovel.chapters[index];
-
-    // 检测是否为卷标题（content 为空或 title 包含"卷"）
-    const isVolume = !chapter.content.trim() || chapter.title.includes('卷');
     
-    // 如果是卷标题，自动跳转到下一个有内容的章节
-    if (isVolume) {
+    // 显示加载进度条
+    showProgressBar();
+    updateProgressBar(30);
+    
+    // 获取章节标题（从元数据中）
+    const chapterTitleInfo = currentNovel.chapter_titles[index];
+    const chapterTitle = chapterTitleInfo ? chapterTitleInfo.title : `第 ${index + 1} 章`;
+    
+    updateProgressBar(50);
+    
+    // 如果章节没有内容（卷标题），查找下一个有内容的章节
+    if (chapterTitleInfo && !chapterTitleInfo.has_content) {
         let nextIndex = index + 1;
-        while (nextIndex < currentNovel.chapters.length) {
-            const nextChapter = currentNovel.chapters[nextIndex];
-            if (nextChapter.content.trim()) {
-                loadChapter(nextIndex);
+        while (nextIndex < currentNovel.chapters_count) {
+            if (currentNovel.chapter_titles[nextIndex] && currentNovel.chapter_titles[nextIndex].has_content) {
+                await loadChapter(nextIndex);
                 return;
             }
             nextIndex++;
         }
-        // 如果没有找到有内容的章节，就不跳转
+        hideProgressBar();
+        showToast('已经是最后一章了');
+        return;
     }
+    
+    // 按需加载章节内容
+    const chapter = await loadChapterContent(getCurrentNovelId(), index);
+    if (!chapter) {
+        console.error('加载章节失败:', index);
+        hideProgressBar();
+        return;
+    }
+    
+    updateProgressBar(70);
 
-    // 查找所属的卷标题（向前查找第一个卷标题）
+    // 查找所属的卷标题（向前查找第一个没有内容的章节）
     let volumeTitle = '';
     for (let i = index - 1; i >= 0; i--) {
-        const prevChapter = currentNovel.chapters[i];
-        if (!prevChapter.content.trim() || prevChapter.title.includes('卷')) {
-            volumeTitle = prevChapter.title;
+        if (!currentNovel.chapter_titles[i].has_content || currentNovel.chapter_titles[i].title.includes('卷')) {
+            volumeTitle = currentNovel.chapter_titles[i].title;
             break;
         }
     }
@@ -303,9 +398,8 @@ function loadChapter(index) {
     // 计算实际章节编号（排除卷标题）
     let actualChapterNum = 0;
     let totalContentChapters = 0;
-    for (let i = 0; i < currentNovel.chapters.length; i++) {
-        const ch = currentNovel.chapters[i];
-        if (ch.content.trim()) {
+    for (let i = 0; i < currentNovel.chapter_titles.length; i++) {
+        if (currentNovel.chapter_titles[i].has_content) {
             totalContentChapters++;
             if (i <= index) {
                 actualChapterNum++;
@@ -315,7 +409,7 @@ function loadChapter(index) {
     
     // 更新顶部标题显示卷标题
     document.getElementById('novel-title').textContent = currentNovel.title;
-    document.getElementById('chapter-title').textContent = volumeTitle || chapter.title;
+    document.getElementById('chapter-title').textContent = volumeTitle || chapterTitle;
     document.getElementById('chapter-progress').textContent = `第 ${actualChapterNum} 章 / 共 ${totalContentChapters} 章`;
 
     // 更新内容
@@ -326,7 +420,7 @@ function loadChapter(index) {
     
     // 如果有卷标题，在正文前显示章节标题
     if (volumeTitle) {
-        htmlContent += `<div class="chapter-title-in-content">${escapeHtml(chapter.title)}</div>`;
+        htmlContent += `<div class="chapter-title-in-content">${escapeHtml(chapterTitle)}</div>`;
     }
     
     // 添加章节正文
@@ -343,17 +437,48 @@ function loadChapter(index) {
 
     // 保存进度
     saveReadingProgress();
+    
+    // 更新书签按钮状态
+    updateBookmarkButton();
+
+    // 更新 giscus 评论区
+    updateGiscusTerm();
+
+    // 隐藏加载进度条
+    updateProgressBar(100);
+    setTimeout(hideProgressBar, 300);
+}
+
+// 更新 giscus 评论区的 discussion term
+function updateGiscusTerm() {
+    const novelTitle = currentNovel.title;
+    const chapterTitleInfo = currentNovel.chapter_titles[currentChapterIndex];
+    const chapterTitle = chapterTitleInfo ? chapterTitleInfo.title : `第 ${currentChapterIndex + 1} 章`;
+
+    // 设置为 "小说标题-章节标题" 格式
+    const term = `${novelTitle}-${chapterTitle}`;
+
+    // 发送消息更新 giscus
+    const giscusFrame = document.querySelector('iframe.giscus-frame');
+    if (giscusFrame) {
+        giscusFrame.contentWindow.postMessage({
+            giscus: {
+                setConfig: {
+                    term: term
+                }
+            }
+        }, 'https://giscus.app');
+    }
 }
 
 // 上一章
-function prevChapter() {
+async function prevChapter() {
     if (currentChapterIndex > 0) {
         let prevIndex = currentChapterIndex - 1;
         // 向前查找第一个有内容的章节
         while (prevIndex >= 0) {
-            const prevChapter = currentNovel.chapters[prevIndex];
-            if (prevChapter.content.trim()) {
-                loadChapter(prevIndex);
+            if (currentNovel.chapter_titles[prevIndex] && currentNovel.chapter_titles[prevIndex].has_content) {
+                await loadChapter(prevIndex);
                 return;
             }
             prevIndex--;
@@ -365,14 +490,13 @@ function prevChapter() {
 }
 
 // 下一章
-function nextChapter() {
-    if (currentChapterIndex < currentNovel.chapters.length - 1) {
+async function nextChapter() {
+    if (currentChapterIndex < currentNovel.chapters_count - 1) {
         let nextIndex = currentChapterIndex + 1;
         // 向后查找第一个有内容的章节
-        while (nextIndex < currentNovel.chapters.length) {
-            const nextChapter = currentNovel.chapters[nextIndex];
-            if (nextChapter.content.trim()) {
-                loadChapter(nextIndex);
+        while (nextIndex < currentNovel.chapters_count) {
+            if (currentNovel.chapter_titles[nextIndex] && currentNovel.chapter_titles[nextIndex].has_content) {
+                await loadChapter(nextIndex);
                 return;
             }
             nextIndex++;
@@ -386,17 +510,30 @@ function nextChapter() {
 // 加载目录
 function loadTOC() {
     const tocList = document.getElementById('toc-list');
-    tocList.innerHTML = currentNovel.chapters.map((chapter, index) => {
+    
+    // 只渲染前100章（虚拟滚动的基础）
+    const renderCount = Math.min(currentNovel.chapters_count, 100);
+    
+    tocList.innerHTML = currentNovel.chapter_titles.slice(0, renderCount).map((chapterInfo, index) => {
         // 检测是否为卷标题
-        const isVolume = !chapter.content.trim() || chapter.title.includes('卷');
+        const isVolume = !chapterInfo.has_content || chapterInfo.title.includes('卷');
         const className = isVolume ? 'toc-item toc-volume' : 'toc-item';
         
         return `
             <div class="${className}" data-index="${index}" onclick="jumpToChapter(${index})">
-                ${escapeHtml(chapter.title)}
+                ${escapeHtml(chapterInfo.title)}
             </div>
         `;
     }).join('');
+    
+    // 如果还有更多章节，添加一个"加载更多"按钮
+    if (currentNovel.chapters_count > renderCount) {
+        const loadMoreBtn = document.createElement('div');
+        loadMoreBtn.className = 'toc-load-more';
+        loadMoreBtn.textContent = `加载更多...（剩余 ${currentNovel.chapters_count - renderCount} 章）`;
+        loadMoreBtn.onclick = loadMoreTOC;
+        tocList.appendChild(loadMoreBtn);
+    }
 }
 
 // 过滤章节
@@ -414,9 +551,58 @@ function filterChapters() {
     });
 }
 
+// 加载更多目录项
+let renderedTOCCount = 100;
+function loadMoreTOC() {
+    const tocList = document.getElementById('toc-list');
+    const loadMoreBtn = tocList.querySelector('.toc-load-more');
+    
+    // 移除"加载更多"按钮
+    if (loadMoreBtn) {
+        loadMoreBtn.remove();
+    }
+    
+    // 渲染更多章节
+    const newCount = Math.min(renderedTOCCount + 100, currentNovel.chapters_count);
+    
+    for (let i = renderedTOCCount; i < newCount; i++) {
+        const chapterInfo = currentNovel.chapter_titles[i];
+        const isVolume = !chapterInfo.has_content || chapterInfo.title.includes('卷');
+        const className = isVolume ? 'toc-item toc-volume' : 'toc-item';
+        
+        const item = document.createElement('div');
+        item.className = className;
+        item.dataset.index = i;
+        item.textContent = chapterInfo.title;
+        item.onclick = () => jumpToChapter(i);
+        
+        tocList.appendChild(item);
+    }
+    
+    renderedTOCCount = newCount;
+    
+    // 如果还有更多章节，重新添加"加载更多"按钮
+    if (renderedTOCCount < currentNovel.chapters_count) {
+        const newLoadMoreBtn = document.createElement('div');
+        newLoadMoreBtn.className = 'toc-load-more';
+        newLoadMoreBtn.textContent = `加载更多...（剩余 ${currentNovel.chapters_count - renderedTOCCount} 章）`;
+        newLoadMoreBtn.onclick = loadMoreTOC;
+        tocList.appendChild(newLoadMoreBtn);
+    }
+}
+
+// 获取当前小说ID
+function getCurrentNovelId() {
+    const savedInfo = sessionStorage.getItem('currentNovel');
+    if (savedInfo) {
+        return JSON.parse(savedInfo).id;
+    }
+    return null;
+}
+
 // 跳转到章节
-function jumpToChapter(index) {
-    loadChapter(index);
+async function jumpToChapter(index) {
+    await loadChapter(index);
     toggleTOC();
 }
 
@@ -640,14 +826,18 @@ function clearHistory() {
 
 // 跳转到历史记录中的小说
 async function jumpToHistoryNovel(novelId, chapterIndex) {
-    // 加载小说完整数据
-    const novelData = await loadNovelData(novelId);
-    if (!novelData) {
+    // 显示加载提示
+    showLoading('正在加载小说信息...');
+
+    // 加载小说元数据
+    const novelMeta = await loadNovelMeta(novelId);
+    if (!novelMeta) {
+        hideLoading();
         alert('加载小说失败');
         return;
     }
     
-    currentNovel = novelData;
+    currentNovel = novelMeta;
     currentChapterIndex = chapterIndex;
     
     // 保存当前小说信息到 sessionStorage
@@ -656,8 +846,13 @@ async function jumpToHistoryNovel(novelId, chapterIndex) {
         chapterIndex: currentChapterIndex
     }));
     
+    // 更新加载提示
+    showLoading('正在跳转...');
+
     // 跳转到阅读器页面
-    window.location.href = 'reader.html';
+    setTimeout(() => {
+        window.location.href = 'reader.html';
+    }, 100);
 }
 
 // 格式化时间
@@ -711,7 +906,7 @@ function setupScrollHandler() {
     const minSwipeDistance = 50; // 最小滑动距离
     
     // 检测是否为移动设备
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
     
     if (isMobile) {
         // 移动端：点击中间区域显示/隐藏头尾栏，左右区域点击翻页
@@ -861,6 +1056,145 @@ function showToast(message) {
     }, 2000);
 }
 
+// ===== 书签功能 =====
+
+// 获取书签列表
+function getBookmarks() {
+    const allBookmarks = JSON.parse(localStorage.getItem(STORAGE_KEYS.BOOKMARKS) || '{}');
+    const novelId = getCurrentNovelId();
+    return allBookmarks[novelId] || [];
+}
+
+// 保存书签列表
+function saveBookmarks(bookmarks) {
+    const allBookmarks = JSON.parse(localStorage.getItem(STORAGE_KEYS.BOOKMARKS) || '{}');
+    const novelId = getCurrentNovelId();
+    allBookmarks[novelId] = bookmarks;
+    localStorage.setItem(STORAGE_KEYS.BOOKMARKS, JSON.stringify(allBookmarks));
+}
+
+// 添加书签
+function addBookmark() {
+    const bookmarks = getBookmarks();
+    const chapterTitleInfo = currentNovel.chapter_titles[currentChapterIndex];
+    const chapterTitle = chapterTitleInfo ? chapterTitleInfo.title : `第 ${currentChapterIndex + 1} 章`;
+    
+    // 检查是否已存在
+    const existingIndex = bookmarks.findIndex(b => b.chapterIndex === currentChapterIndex);
+    if (existingIndex !== -1) {
+        // 已存在，删除
+        bookmarks.splice(existingIndex, 1);
+        saveBookmarks(bookmarks);
+        showToast('已取消书签');
+        updateBookmarkButton();
+        return;
+    }
+    
+    // 添加新书签
+    bookmarks.push({
+        chapterIndex: currentChapterIndex,
+        chapterTitle: chapterTitle,
+        timestamp: Date.now()
+    });
+    
+    // 按时间排序
+    bookmarks.sort((a, b) => b.timestamp - a.timestamp);
+    
+    saveBookmarks(bookmarks);
+    showToast('已添加书签');
+    updateBookmarkButton();
+}
+
+// 删除书签
+function deleteBookmark(chapterIndex) {
+    const bookmarks = getBookmarks();
+    const index = bookmarks.findIndex(b => b.chapterIndex === chapterIndex);
+    if (index !== -1) {
+        bookmarks.splice(index, 1);
+        saveBookmarks(bookmarks);
+        showToast('已删除书签');
+        loadBookmarks();
+        updateBookmarkButton();
+    }
+}
+
+// 跳转到书签
+async function jumpToBookmark(chapterIndex) {
+    await loadChapter(chapterIndex);
+    toggleBookmarks();
+}
+
+// 切换书签状态
+function toggleBookmark() {
+    addBookmark();
+}
+
+// 更新书签按钮状态
+function updateBookmarkButton() {
+    const bookmarkBtn = document.getElementById('bookmark-btn');
+    if (!bookmarkBtn) return;
+    
+    const bookmarks = getBookmarks();
+    const isBookmarked = bookmarks.some(b => b.chapterIndex === currentChapterIndex);
+    
+    const iconEmpty = bookmarkBtn.querySelector('.bookmark-icon-empty');
+    const iconFilled = bookmarkBtn.querySelector('.bookmark-icon-filled');
+    
+    if (isBookmarked) {
+        bookmarkBtn.classList.add('active');
+        iconEmpty.style.display = 'none';
+        iconFilled.style.display = 'block';
+    } else {
+        bookmarkBtn.classList.remove('active');
+        iconEmpty.style.display = 'block';
+        iconFilled.style.display = 'none';
+    }
+}
+
+// 加载书签列表
+function loadBookmarks() {
+    const bookmarksList = document.getElementById('bookmarks-list');
+    if (!bookmarksList) return;
+    
+    const bookmarks = getBookmarks();
+    
+    if (bookmarks.length === 0) {
+        bookmarksList.innerHTML = '<div class="bookmark-empty">暂无书签<br>点击右上角 ☆ 添加书签</div>';
+        return;
+    }
+    
+    bookmarksList.innerHTML = bookmarks.map(bookmark => {
+        const timeStr = formatTime(bookmark.timestamp);
+        return `
+            <div class="bookmark-item" onclick="jumpToBookmark(${bookmark.chapterIndex})">
+                <div class="bookmark-chapter">${escapeHtml(bookmark.chapterTitle)}</div>
+                <div class="bookmark-time">${timeStr}</div>
+                <span class="bookmark-delete" onclick="event.stopPropagation(); deleteBookmark(${bookmark.chapterIndex})">×</span>
+            </div>
+        `;
+    }).join('');
+}
+
+// 切换书签面板
+function toggleBookmarks() {
+    const bookmarksPanel = document.getElementById('bookmarks-panel');
+    bookmarksPanel.classList.toggle('active');
+    
+    // 加载书签列表
+    if (bookmarksPanel.classList.contains('active')) {
+        loadBookmarks();
+    }
+    
+    // 移动端：打开书签时显示头尾栏
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    if (isMobile && bookmarksPanel.classList.contains('active')) {
+        const header = document.getElementById('reader-header');
+        const footer = document.getElementById('reader-footer');
+        header.classList.remove('hidden');
+        footer.classList.remove('hidden');
+    }
+}
+
 // HTML 转义
 function escapeHtml(text) {
     const div = document.createElement('div');
@@ -886,11 +1220,15 @@ document.addEventListener('keydown', (e) => {
         case 'Escape':
             const settingsPanel = document.getElementById('settings-panel');
             const tocModal = document.getElementById('toc-modal');
+            const bookmarksPanel = document.getElementById('bookmarks-panel');
             if (settingsPanel.classList.contains('active')) {
                 toggleSettings();
             }
             if (tocModal.classList.contains('active')) {
                 toggleTOC();
+            }
+            if (bookmarksPanel.classList.contains('active')) {
+                toggleBookmarks();
             }
             break;
     }

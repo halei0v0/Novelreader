@@ -8,17 +8,41 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- 加载进度条 -->
+    <div class="chapter-progress-bar" id="chapter-progress-bar"></div>
+
     <div class="app-container reader-mode" id="reader-container">
         <!-- 顶部工具栏 -->
         <nav class="navbar navbar-expand-lg reader-header" id="reader-header">
             <div class="container-fluid">
                 <button class="btn btn-outline-light" onclick="goBack()">
-                    <span>← 返回</span>
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" style="margin-right: 4px;">
+                        <path fill-rule="evenodd" d="M15 8a.5.5 0 00-.5-.5H2.707l3.147-3.146a.5.5 0 10-.708-.708l-4 4a.5.5 0 000 .708l4 4a.5.5 0 00.708-.708L2.707 8.5H14.5A.5.5 0 0015 8z"/>
+                    </svg>
+                    返回
                 </button>
                 <span class="navbar-title" id="novel-title">小说标题</span>
-                <button class="btn btn-outline-light" onclick="toggleSettings()">
-                    <span>⚙️ 设置</span>
-                </button>
+                <div class="reader-header-actions">
+                    <button class="header-action-btn bookmark-add-btn" id="bookmark-btn" onclick="toggleBookmark()" aria-label="书签" title="添加书签">
+                        <svg class="bookmark-icon-empty" width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 00-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767l-3.686 1.894.694-3.957a.565.565 0 00-.163-.505L1.71 6.745l4.052-.576a.525.525 0 00.393-.288L8 2.223l1.847 3.658a.525.525 0 00.393.288l4.052.575-2.906 2.77a.565.565 0 00-.163.506l.694 3.957-3.686-1.894a.503.503 0 00-.461 0z"/>
+                        </svg>
+                        <svg class="bookmark-icon-filled" width="20" height="20" viewBox="0 0 16 16" fill="currentColor" style="display: none;">
+                            <path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/>
+                        </svg>
+                    </button>
+                    <button class="header-action-btn bookmarks-list-btn" onclick="toggleBookmarks()" aria-label="书签列表" title="书签列表">
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M2 2a2 2 0 012-2h8a2 2 0 012 2v13.5a.5.5 0 01-.777.416L8 13.101l-5.223 2.815A.5.5 0 012 15.5V2z"/>
+                        </svg>
+                    </button>
+                    <button class="header-action-btn settings-btn" onclick="toggleSettings()" aria-label="设置" title="阅读设置">
+                        <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 4.754a3.246 3.246 0 100 6.492 3.246 3.246 0 000-6.492zM5.754 8a2.246 2.246 0 114.492 0 2.246 2.246 0 01-4.492 0z"/>
+                            <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 01-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 01-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 01.52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 011.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 011.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 01.52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 01-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 01-1.255-.52l-.094-.319z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </nav>
 
@@ -33,6 +57,27 @@
         <!-- 正文内容 -->
         <div class="reader-content" id="reader-content">
             <!-- 章节内容动态加载 -->
+        </div>
+
+        <!-- 评论区 -->
+        <div class="giscus-container">
+            <script src="https://giscus.app/client.js"
+                    data-repo="halei0v0/Novelreader"
+                    data-repo-id="R_kgDORMt8LA"
+                    data-category="Show and tell"
+                    data-category-id="DIC_kwDORMt8LM4C3GS-"
+                    data-mapping="specific"
+                    data-term="novel-chapter"
+                    data-strict="0"
+                    data-reactions-enabled="1"
+                    data-emit-metadata="0"
+                    data-input-position="top"
+                    data-theme="preferred_color_scheme"
+                    data-lang="zh-CN"
+                    data-loading="lazy"
+                    crossorigin="anonymous"
+                    async>
+            </script>
         </div>
 
         <!-- 底部导航 -->
@@ -73,13 +118,23 @@
                     <label class="settings-label">主题</label>
                     <div class="theme-options">
                         <button class="theme-btn theme-light" onclick="setTheme('light')" data-theme="light">
-                            ☀️ 白天
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 11a3 3 0 100-6 3 3 0 000 6z"/>
+                                <path d="M13.657 5.657a8 8 0 11-11.314 0 8 8 0 0111.314 0zM8 3.5a.5.5 0 01.5.5v1a.5.5 0 01-1 0V4a.5.5 0 01.5-.5zM8 12a.5.5 0 01.5.5v1a.5.5 0 01-1 0v-1a.5.5 0 01.5-.5zM12.5 8a.5.5 0 01-.5.5h-1a.5.5 0 010-1h1a.5.5 0 01.5.5zM4 8a.5.5 0 01-.5.5h-1a.5.5 0 010-1h1a.5.5 0 01.5.5z"/>
+                            </svg>
+                            白天
                         </button>
                         <button class="theme-btn theme-sepia" onclick="setTheme('sepia')" data-theme="sepia">
-                            📖 护眼
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M2 2a2 2 0 012-2h8a2 2 0 012 2v13.5a.5.5 0 01-.777.416L8 13.101l-5.223 2.815A.5.5 0 012 15.5V2z"/>
+                            </svg>
+                            护眼
                         </button>
                         <button class="theme-btn theme-dark" onclick="setTheme('dark')" data-theme="dark">
-                            🌙 夜间
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M6 .278a.768.768 0 01.08.858 7.208 7.208 0 00-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 01.81.316.733.733 0 01-.031.893A8.349 8.349 0 018.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 016 .278z"/>
+                            </svg>
+                            夜间
                         </button>
                     </div>
                 </div>
@@ -118,6 +173,17 @@
                 <div class="toc-list" id="toc-list">
                     <!-- 章节列表动态加载 -->
                 </div>
+            </div>
+        </div>
+
+        <!-- 书签面板 -->
+        <div class="bookmarks-panel" id="bookmarks-panel">
+            <div class="bookmarks-header">
+                <h3>书签</h3>
+                <button class="btn-close btn-close-white" onclick="toggleBookmarks()"></button>
+            </div>
+            <div id="bookmarks-list">
+                <!-- 书签列表动态加载 -->
             </div>
         </div>
     </div>

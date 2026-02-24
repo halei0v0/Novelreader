@@ -2,160 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
-import re
-from pathlib import Path
-
-def parse_novel_file(file_path):
-    """解析小说txt文件，提取章节信息"""
-    # 尝试用UTF-8编码读取，如果失败则尝试GBK
-    content = None
-    for encoding in ['utf-8', 'gbk', 'gb18030']:
-        try:
-            with open(file_path, 'r', encoding=encoding) as f:
-                content = f.read()
-            print(f"  使用编码: {encoding}")
-            break
-        except UnicodeDecodeError:
-            continue
-    
-    if content is None:
-        print(f"  警告: 无法读取文件，使用utf-8 with ignore")
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-            content = f.read()
-    
-    # 提取书名、作者、简介
-    lines = content.split('\n')
-    
-    # 尝试从文件名提取书名
-    book_name = Path(file_path).stem
-    author = "未知作者"
-    description = ""
-    
-    # 尝试解析文件头信息
-    header_lines = []
-    for i, line in enumerate(lines[:100]):
-        if line.strip():
-            header_lines.append(line.strip())
-        elif header_lines:
-            break
-    
-    # 尝试提取作者
-    author_pattern = r'作者[:：]\s*(.+?)(?:\s|$|简介|描述)'
-    for line in header_lines:
-        match = re.search(author_pattern, line)
-        if match:
-            author = match.group(1).strip()
-            break
-    
-    # 尝试提取简介
-    desc_pattern = r'(?:简介|描述)[:：]\s*(.+)'
-    desc_lines = []
-    in_desc = False
-    for line in header_lines:
-        match = re.search(desc_pattern, line)
-        if match:
-            desc_lines.append(match.group(1).strip())
-            in_desc = True
-        elif in_desc and line.strip():
-            desc_lines.append(line.strip())
-        elif in_desc:
-            break
-    
-    description = ' '.join(desc_lines) if desc_lines else "暂无简介"
-    
-    # 提取章节
-    # 常见章节匹配模式 - 增强限制，避免误匹配
-    chapter_patterns = [
-        r'^第\s*[0-9零一二三四五六七八九十百千万]+\s*[章节集卷回部篇]',  # 第X章/节/卷（严格匹配）
-        r'^第\s*[0-9零一二三四五六七八九十百千万]+\s*[ \t、\.\-：:]\s*[^\n]{1,50}',  # 第1 标题（标题长度限制）
-        r'^Chapter\s*[0-9]+.*',  # Chapter X
-        r'^[0-9]+\.\s*[^\n]{1,50}',  # 1. 标题（标题长度限制）
-        r'^序\s*[言文]?',  # 序言/序文
-        r'^楔子',  # 楔子（完整匹配）
-        r'^引子',  # 引子（完整匹配）
-        r'^番外[^\n]{0,50}',  # 番外（标题长度限制）
-        r'^卷\s*[0-9零一二三四五六七八九十百千万]+\s*[章节集卷回部篇]?',  # 卷X
-    ]
-    
-    combined_pattern = '|'.join(chapter_patterns)
-    
-    chapters = []
-    current_chapter = None
-    current_content = []
-    
-    for line in lines:
-        line_stripped = line.strip()
-        if not line_stripped:
-            current_content.append("")
-            continue
-            
-        # 检查是否是章节标题
-        is_chapter = False
-        match = re.match(combined_pattern, line_stripped, re.MULTILINE)
-        
-        if match:
-            # 额外验证：章节标题不应过长（一般不超过50字）
-            title_len = len(line_stripped)
-            if title_len <= 50:
-                # 额外验证：避免误匹配包含大量标点或特殊字符的行
-                # 章节标题通常格式简洁，不会包含太多连续的特殊字符
-                if not re.search(r'[。！？，、；：""''（）\[\]{}]{3,}', line_stripped):
-                    # 额外验证：章节标题应该是独立的行，不太可能是段落的一部分
-                    # 检查是否是典型的章节格式（如"第X章"、"第X章 标题"）
-                    # 重要：必须以"章"、"节"、"卷"、"回"、"部"、"篇"结尾，或者后面紧跟分隔符和简短标题
-                    if re.match(r'^第\s*[0-9零一二三四五六七八九十百千万]+\s*[章节集卷回部篇]\s*$', line_stripped) or \
-                       re.match(r'^第\s*[0-9零一二三四五六七八九十百千万]+\s*[章节集卷回部篇]\s+[^\n]{1,20}$', line_stripped) or \
-                       re.match(r'^Chapter\s*[0-9]+\s*$', line_stripped) or \
-                       re.match(r'^Chapter\s*[0-9]+\s+[^\n]{1,20}$', line_stripped) or \
-                       re.match(r'^[0-9]+\.\s*[^\n]{1,20}$', line_stripped) or \
-                       re.match(r'^序\s*[言文]?$', line_stripped) or \
-                       re.match(r'^楔子$', line_stripped) or \
-                       re.match(r'^引子$', line_stripped) or \
-                       re.match(r'^番外[^\n]{0,20}$', line_stripped):
-                        is_chapter = True
-                    else:
-                        # 匹配了但不符合严格格式，可能是误匹配
-                        is_chapter = False
-                else:
-                    # 包含过多标点符号，不是章节标题
-                    is_chapter = False
-            else:
-                # 标题过长，不是章节标题
-                is_chapter = False
-        
-        if is_chapter:
-            # 保存上一章
-            if current_chapter and current_content:
-                chapters.append({
-                    'title': current_chapter,
-                    'content': '\n'.join(current_content).strip()
-                })
-            
-            current_chapter = line_stripped
-            current_content = []
-        else:
-            current_content.append(line)
-    
-    # 保存最后一章
-    if current_chapter and current_content:
-        chapters.append({
-            'title': current_chapter,
-            'content': '\n'.join(current_content).strip()
-        })
-    
-    # 如果没有找到章节，整个文件作为一章
-    if not chapters:
-        chapters.append({
-            'title': '正文',
-            'content': content.strip()
-        })
-    
-    return {
-        'title': book_name,
-        'author': author,
-        'description': description,
-        'chapters': chapters
-    }
+from shared_parser import parse_novel_file
 
 def convert_novels():
     """转换目录下所有小说文件"""
@@ -208,15 +55,39 @@ def convert_novels():
             'chapters_count': len(novel['chapters'])
         })
         
-        # 保存小说章节内容到单独的文件
-        novel_file = f"data/{novel_id}.json"
-        os.makedirs('data', exist_ok=True)
-        with open(novel_file, 'w', encoding='utf-8') as f:
-            json.dump(novel, f, ensure_ascii=False, indent=2)
+        # 创建小说目录
+        novel_dir = f"data/{novel_id}"
+        os.makedirs(novel_dir, exist_ok=True)
+        
+        # 保存章节标题列表（轻量，用于快速加载目录）
+        novel_meta_file = f"{novel_dir}/meta.json"
+        with open(novel_meta_file, 'w', encoding='utf-8') as f:
+            json.dump({
+                'title': novel['title'],
+                'author': novel['author'],
+                'description': novel['description'],
+                'chapters_count': len(novel['chapters']),
+                'chapter_titles': novel.get('chapter_titles', [])
+            }, f, ensure_ascii=False, indent=2)
+        
+        # 分块保存章节内容（每100章一个块）
+        chunk_size = 100
+        for chunk_index in range(0, len(novel['chapters']), chunk_size):
+            chunk_data = novel['chapters'][chunk_index:chunk_index + chunk_size]
+            chunk_file = f"{novel_dir}/chunk_{chunk_index // chunk_size}.json"
+            
+            with open(chunk_file, 'w', encoding='utf-8') as f:
+                json.dump({
+                    'chunk_index': chunk_index // chunk_size,
+                    'start_chapter': chunk_index,
+                    'end_chapter': min(chunk_index + chunk_size, len(novel['chapters'])),
+                    'chapters': chunk_data
+                }, f, ensure_ascii=False, indent=2)
         
         # 获取文件大小
-        file_size = os.path.getsize(novel_file) / 1024 / 1024  # MB
-        print(f"  已保存: {novel_file} ({file_size:.2f} MB)")
+        meta_size = os.path.getsize(novel_meta_file) / 1024  # KB
+        print(f"  已保存: {novel_meta_file} ({meta_size:.2f} KB)")
+        print(f"  已保存: {len(novel['chapters'])} 章，分 {(len(novel['chapters']) + chunk_size - 1) // chunk_size} 个块")
     
     # 保存小说列表
     with open('novels.json', 'w', encoding='utf-8') as f:

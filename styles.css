@@ -65,7 +65,10 @@ body {
 }
 
 .book-icon {
-    font-size: 1.5rem;
+    width: 24px;
+    height: 24px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 /* 主内容区 */
@@ -137,6 +140,12 @@ body {
     min-width: 50px;
 }
 
+.search-btn svg {
+    vertical-align: middle;
+    width: 18px;
+    height: 18px;
+}
+
 .search-btn:hover {
     background: var(--success-color);
 }
@@ -188,7 +197,10 @@ body {
 }
 
 .history-icon {
-    font-size: 1.5rem;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
 }
 
 .clear-history-btn {
@@ -550,6 +562,16 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.theme-btn svg,
+.font-size-btn svg,
+.line-height-btn svg {
+    flex-shrink: 0;
 }
 
 .theme-btn:hover,
@@ -668,6 +690,22 @@ body {
     font-weight: 700;
 }
 
+/* 目录加载更多按钮 */
+.toc-load-more {
+    display: block;
+    padding: 15px;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toc-load-more:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
 /* 响应式 */
 @media (max-width: 768px) {
     .page-header h1 {
@@ -724,6 +762,19 @@ body {
         min-width: 44px;
     }
     
+    /* 移动端按钮尺寸优化 */
+    .header-action-btn {
+        width: 44px;
+        height: 44px;
+        min-width: 44px;
+        min-height: 44px;
+    }
+    
+    .header-action-btn svg {
+        width: 22px;
+        height: 22px;
+    }
+    
     .settings-panel {
         width: 100%;
     }
@@ -742,6 +793,20 @@ body {
     
     .toc-item.toc-volume:hover {
         padding-left: 20px;
+    }
+    
+    /* 评论界面响应式样式 */
+    .giscus-container {
+        max-width: 100%;
+        margin: 15px 0 100px;
+        padding: 15px 12px;
+        border-radius: 8px;
+    }
+    
+    .giscus-container iframe {
+        width: 100%;
+        height: auto;
+        min-height: 400px;
     }
 }
 
@@ -830,4 +895,258 @@ body {
     50% {
         opacity: 0.5;
     }
+}
+
+/* 加载进度条 */
+.chapter-progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-color), var(--success-color));
+    z-index: 10000;
+    transition: width 0.3s ease;
+    width: 0%;
+}
+
+
+
+/* SVG 图标样式 */
+.reader-header button svg {
+    vertical-align: middle;
+    display: inline-block;
+}
+
+/* 右上角按钮容器 */
+.reader-header-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+/* 基础按钮样式 */
+.header-action-btn {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.header-action-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.header-action-btn:active {
+    transform: translateY(0);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+
+/* 书签按钮特殊样式 - 金色边框 */
+.bookmark-add-btn {
+    border-color: rgba(255, 215, 0, 0.6);
+    background: rgba(255, 215, 0, 0.15);
+}
+
+.bookmark-add-btn:hover {
+    background: rgba(255, 215, 0, 0.3);
+    border-color: rgba(255, 215, 0, 0.9);
+    box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4);
+}
+
+/* 书签按钮激活状态 */
+.bookmark-add-btn.active {
+    border-color: #ffd700;
+    background: rgba(255, 215, 0, 0.4);
+    color: #ffd700;
+}
+
+.bookmark-add-btn.active:hover {
+    background: rgba(255, 215, 0, 0.5);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+}
+
+/* 书签列表按钮特殊样式 - 紫色边框 */
+.bookmarks-list-btn {
+    border-color: rgba(155, 89, 182, 0.6);
+    background: rgba(155, 89, 182, 0.15);
+}
+
+.bookmarks-list-btn:hover {
+    background: rgba(155, 89, 182, 0.3);
+    border-color: rgba(155, 89, 182, 0.9);
+    box-shadow: 0 4px 16px rgba(155, 89, 182, 0.4);
+}
+
+/* 设置按钮特殊样式 - 蓝色边框 */
+.settings-btn {
+    border-color: rgba(74, 144, 217, 0.6);
+    background: rgba(74, 144, 217, 0.15);
+}
+
+.settings-btn:hover {
+    background: rgba(74, 144, 217, 0.3);
+    border-color: rgba(74, 144, 217, 0.9);
+    box-shadow: 0 4px 16px rgba(74, 144, 217, 0.4);
+}
+
+/* 书签按钮和设置按钮悬停旋转动画 */
+.header-action-btn:not(.bookmarks-list-btn):hover svg {
+    animation: rotate-icon 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate-icon {
+    0%, 100% {
+        transform: rotate(0deg);
+    }
+    50% {
+        transform: rotate(90deg);
+    }
+}
+
+/* 按钮点击波纹效果 */
+.header-action-btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0;
+}
+
+.header-action-btn:active::after {
+    width: 100%;
+    height: 100%;
+    opacity: 1;
+    transition: 0s;
+}
+
+/* 书签列表 */
+.bookmarks-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 320px;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.bookmarks-panel.active {
+    transform: translateX(0);
+}
+
+.bookmarks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bookmarks-header h3 {
+    color: white;
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.bookmark-item {
+    display: block;
+    padding: 12px 15px;
+    color: rgba(255, 255, 255, 0.9);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+
+.bookmark-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    padding-left: 20px;
+}
+
+.bookmark-item .bookmark-chapter {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.bookmark-item .bookmark-time {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.bookmark-item .bookmark-delete {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 100, 100, 0.8);
+    cursor: pointer;
+    padding: 5px;
+    font-size: 1.2rem;
+}
+
+.bookmark-item .bookmark-delete:hover {
+    color: rgba(255, 100, 100, 1);
+}
+
+.bookmark-empty {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+    padding: 40px 20px;
+}
+
+/* giscus 评论区样式 */
+.giscus-container {
+    max-width: 800px;
+    margin: 20px auto 120px;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+/* giscus iframe 自适应 */
+.giscus-container iframe {
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* 暗黑模式下的 giscus 容器 */
+.theme-dark .giscus-container {
+    background: #2d2d2d;
+    border-color: #404040;
+}
+
+/* 护眼模式下的 giscus 容器 */
+.theme-sepia .giscus-container {
+    background: #fff;
+    border-color: #d4c9b5;
 }
