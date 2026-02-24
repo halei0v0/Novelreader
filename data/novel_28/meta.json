@@ -1,0 +1,936 @@
+{
+  "title": "原始蛮荒部落",
+  "author": "丧狐",
+  "description": "盛产美女的“姜氏部族”与“申屠部族”已开战三年，这让姜氏部族的成年男人近乎死绝，而一但输掉“部族生死战”，姜氏部族的所有女人，会被折磨致死，会被凌辱贩卖，绝望的气氛笼罩着整个部族，有人选择了逃亡，有人选择了背叛。 十五岁的姜玄本还是一个半大孩子，为了母亲妹妹以及族里的女人们，他别无选择！ 我不装了！我摊牌了！ 我一直在隐藏实力！ 我！姜玄！姜氏部族最后一个男人！ ==================================================",
+  "chapters_count": 232,
+  "chapter_titles": [
+    {
+      "title": "第1章 部族生死战",
+      "has_content": true
+    },
+    {
+      "title": "第2章 想当英雄？成全你",
+      "has_content": true
+    },
+    {
+      "title": "第3章 半步先天！强杀",
+      "has_content": true
+    },
+    {
+      "title": "第4章 姜玄？怎么可能",
+      "has_content": true
+    },
+    {
+      "title": "第5章 东乾女帝",
+      "has_content": true
+    },
+    {
+      "title": "第6章 世间唯一《如意呼吸法》",
+      "has_content": true
+    },
+    {
+      "title": "第7章 天赋暴涨",
+      "has_content": true
+    },
+    {
+      "title": "第8章 卫家老宅",
+      "has_content": true
+    },
+    {
+      "title": "第9章 惊变",
+      "has_content": true
+    },
+    {
+      "title": "第10章 百年来无人炼成的第九式",
+      "has_content": true
+    },
+    {
+      "title": "第11章 小玉，是你该奉献的时候了",
+      "has_content": true
+    },
+    {
+      "title": "第12章 你娘让我跟你圆房",
+      "has_content": true
+    },
+    {
+      "title": "第13章 送上门的申屠玉",
+      "has_content": true
+    },
+    {
+      "title": "第14章 杀人还要诛心",
+      "has_content": true
+    },
+    {
+      "title": "第15章 千丝秘术",
+      "has_content": true
+    },
+    {
+      "title": "第16章 准备庆祝吧",
+      "has_content": true
+    },
+    {
+      "title": "第17章 杀他立威",
+      "has_content": true
+    },
+    {
+      "title": "第18章 晚宴杀机",
+      "has_content": true
+    },
+    {
+      "title": "第19章 族长命令",
+      "has_content": true
+    },
+    {
+      "title": "第20章 震撼击杀",
+      "has_content": true
+    },
+    {
+      "title": "第21章 千年之才",
+      "has_content": true
+    },
+    {
+      "title": "第22章 他将来还能来寻仇不成？",
+      "has_content": true
+    },
+    {
+      "title": "第23章 神魔转世的传说",
+      "has_content": true
+    },
+    {
+      "title": "第24章 技艺入道的三重境界",
+      "has_content": true
+    },
+    {
+      "title": "第25章 成亲圆房",
+      "has_content": true
+    },
+    {
+      "title": "第26章 突破！先天境",
+      "has_content": true
+    },
+    {
+      "title": "第27章 那个神魔转世的女人",
+      "has_content": true
+    },
+    {
+      "title": "第28章 八月初七，四方云集",
+      "has_content": true
+    },
+    {
+      "title": "第29章 说杀你爹就杀你爹",
+      "has_content": true
+    },
+    {
+      "title": "第30章 一个人的绝地反击",
+      "has_content": true
+    },
+    {
+      "title": "第31章 千年第二天才",
+      "has_content": true
+    },
+    {
+      "title": "第32章 卫家会议结果",
+      "has_content": true
+    },
+    {
+      "title": "第33章 飞雪城的天才们",
+      "has_content": true
+    },
+    {
+      "title": "第34章 黑潭山寻宝的日子",
+      "has_content": true
+    },
+    {
+      "title": "第35章 这神魔之姿的绝代女人",
+      "has_content": true
+    },
+    {
+      "title": "第36章 突破！先天后期",
+      "has_content": true
+    },
+    {
+      "title": "第37章 就没考虑过接不住吗？",
+      "has_content": true
+    },
+    {
+      "title": "第38章 你自己给她吧",
+      "has_content": true
+    },
+    {
+      "title": "第39章 一个先天后期罢了",
+      "has_content": true
+    },
+    {
+      "title": "第40章 就这？",
+      "has_content": true
+    },
+    {
+      "title": "第41章 好消息啊",
+      "has_content": true
+    },
+    {
+      "title": "第42章 多好的鼎炉啊",
+      "has_content": true
+    },
+    {
+      "title": "第43章 这女人好香",
+      "has_content": true
+    },
+    {
+      "title": "第44章 我可以娶你",
+      "has_content": true
+    },
+    {
+      "title": "第45章 他绝不可能杀了葛家三兄弟",
+      "has_content": true
+    },
+    {
+      "title": "第46章 姜族长！久仰大名",
+      "has_content": true
+    },
+    {
+      "title": "第47章 冰山美人的震撼",
+      "has_content": true
+    },
+    {
+      "title": "第48章 挑战可以！签生死状",
+      "has_content": true
+    },
+    {
+      "title": "第49章 被姜玄训斥发懵的陈元姝",
+      "has_content": true
+    },
+    {
+      "title": "第50章 轰动飞雪城",
+      "has_content": true
+    },
+    {
+      "title": "第51章 女帝的情感小课堂",
+      "has_content": true
+    },
+    {
+      "title": "第52章 黑潭宫旗帜与刀劫书",
+      "has_content": true
+    },
+    {
+      "title": "第54章 激怒姜玄",
+      "has_content": true
+    },
+    {
+      "title": "第55章 当死！以儆效尤",
+      "has_content": true
+    },
+    {
+      "title": "第56章 姜玄！神魔之姿",
+      "has_content": true
+    },
+    {
+      "title": "第57章 对陈元姝下手",
+      "has_content": true
+    },
+    {
+      "title": "第58章 这一夜……",
+      "has_content": true
+    },
+    {
+      "title": "第59章 两人估计彻夜修行来着",
+      "has_content": true
+    },
+    {
+      "title": "第60章 他还真能忍",
+      "has_content": true
+    },
+    {
+      "title": "第61章 来自劫境的杀机",
+      "has_content": true
+    },
+    {
+      "title": "第62章 返璞归真的最强先天",
+      "has_content": true
+    },
+    {
+      "title": "第63章 姜玄必死无疑",
+      "has_content": true
+    },
+    {
+      "title": "第64章 冲冠一怒为红颜",
+      "has_content": true
+    },
+    {
+      "title": "第65章 共修恒沙魄",
+      "has_content": true
+    },
+    {
+      "title": "第66章 第二次成亲",
+      "has_content": true
+    },
+    {
+      "title": "第67章 满城喧嚣中的卫家",
+      "has_content": true
+    },
+    {
+      "title": "第68章 姜玄！你不要太狂妄",
+      "has_content": true
+    },
+    {
+      "title": "第69章 顿悟！能杀劫境的一刀",
+      "has_content": true
+    },
+    {
+      "title": "第70章 震惊的雷鸿与廖威",
+      "has_content": true
+    },
+    {
+      "title": "第71章 破空效果",
+      "has_content": true
+    },
+    {
+      "title": "第72章 神魔城主的反应",
+      "has_content": true
+    },
+    {
+      "title": "第73章 城主测验",
+      "has_content": true
+    },
+    {
+      "title": "第74章 奖励！先天圣品",
+      "has_content": true
+    },
+    {
+      "title": "第75章 先天圆满！一百二十倍先天之力",
+      "has_content": true
+    },
+    {
+      "title": "第76章 心念异变！真正的底牌杀招",
+      "has_content": true
+    },
+    {
+      "title": "第77章 元神飞剑之术",
+      "has_content": true
+    },
+    {
+      "title": "第78章 姜玄就这么怕死？",
+      "has_content": true
+    },
+    {
+      "title": "第79章 姜玄登顶！十万里最强先天",
+      "has_content": true
+    },
+    {
+      "title": "第80章 不仅碾压！还游刃有余",
+      "has_content": true
+    },
+    {
+      "title": "第81章 无双魅力奇女子",
+      "has_content": true
+    },
+    {
+      "title": "第82章 绝对实力！姜玄的目标",
+      "has_content": true
+    },
+    {
+      "title": "第83章 你想杀他，去杀便是",
+      "has_content": true
+    },
+    {
+      "title": "第84章 杀向黑潭山",
+      "has_content": true
+    },
+    {
+      "title": "第85章 魔头的窥伺",
+      "has_content": true
+    },
+    {
+      "title": "第86章 劫境刺杀！爆发",
+      "has_content": true
+    },
+    {
+      "title": "第87章 先天战劫境",
+      "has_content": true
+    },
+    {
+      "title": "第88章 极致震撼",
+      "has_content": true
+    },
+    {
+      "title": "第89章 惊艳绝伦的一刀！惊变",
+      "has_content": true
+    },
+    {
+      "title": "第90章 青金锋芒",
+      "has_content": true
+    },
+    {
+      "title": "第91章 无论胜败都将名载史册的一战",
+      "has_content": true
+    },
+    {
+      "title": "第92章 无尽潭支流",
+      "has_content": true
+    },
+    {
+      "title": "第93章 分胜负！先天神话",
+      "has_content": true
+    },
+    {
+      "title": "第94章 葬身",
+      "has_content": true
+    },
+    {
+      "title": "第95章 去吧！那是你唯一的生路",
+      "has_content": true
+    },
+    {
+      "title": "第96章 穿越黑暗，抵达光明",
+      "has_content": true
+    },
+    {
+      "title": "第97章 神魔传承！黑潭宫第四关",
+      "has_content": true
+    },
+    {
+      "title": "第98章 裴霓裳！给姜玄一些教训",
+      "has_content": true
+    },
+    {
+      "title": "第99章 杀过去",
+      "has_content": true
+    },
+    {
+      "title": "第100章 一次通关！姜玄留下的传承",
+      "has_content": true
+    },
+    {
+      "title": "第101章 姜玄的死讯",
+      "has_content": true
+    },
+    {
+      "title": "第102章 飞雪城主与上古妖兽",
+      "has_content": true
+    },
+    {
+      "title": "第103章 醒来！再进一步",
+      "has_content": true
+    },
+    {
+      "title": "第104章 不可思议的恐怖奖励",
+      "has_content": true
+    },
+    {
+      "title": "第105章 震惊的裴霓裳",
+      "has_content": true
+    },
+    {
+      "title": "第106章 裴霓裳：夫……夫君",
+      "has_content": true
+    },
+    {
+      "title": "第107章 神魔之力",
+      "has_content": true
+    },
+    {
+      "title": "第108章 碾压劫境的破道期",
+      "has_content": true
+    },
+    {
+      "title": "第109章 三年！三千倍先天之力凝练神魔之力",
+      "has_content": true
+    },
+    {
+      "title": "第110章 一剑可破神魔！惊变",
+      "has_content": true
+    },
+    {
+      "title": "第111章 元神功法！重见天日",
+      "has_content": true
+    },
+    {
+      "title": "第112章 恐怖天劫",
+      "has_content": true
+    },
+    {
+      "title": "第113章 就你叫蚩狰啊",
+      "has_content": true
+    },
+    {
+      "title": "第114章 我回来了",
+      "has_content": true
+    },
+    {
+      "title": "第115章 传说归来！造势",
+      "has_content": true
+    },
+    {
+      "title": "第116章 杀上卫家",
+      "has_content": true
+    },
+    {
+      "title": "第117章 一刀破阵！卫家变天！斩监察使",
+      "has_content": true
+    },
+    {
+      "title": "第118章 粉雕玉琢小丫头！女儿！叫爸爸",
+      "has_content": true
+    },
+    {
+      "title": "第119章 一个已经成为劫境的天才！就这么杀了",
+      "has_content": true
+    },
+    {
+      "title": "第120章 狂妄的姜玄与飞雪城主",
+      "has_content": true
+    },
+    {
+      "title": "第121章 狂笑不止",
+      "has_content": true
+    },
+    {
+      "title": "第122章 帮我杀个人",
+      "has_content": true
+    },
+    {
+      "title": "第123章 试试破道期的斤两？",
+      "has_content": true
+    },
+    {
+      "title": "第124章 盛会！八大神魔汇聚飞雪城",
+      "has_content": true
+    },
+    {
+      "title": "第125章 七个一起上吧，我一并解决",
+      "has_content": true
+    },
+    {
+      "title": "第126章 震撼！沸腾",
+      "has_content": true
+    },
+    {
+      "title": "第127章 你连我一招都接不住，凭什么认为我会输？",
+      "has_content": true
+    },
+    {
+      "title": "第128章 姜玄摧毁一切的杀招",
+      "has_content": true
+    },
+    {
+      "title": "第129章 狗男人怎么可能赢",
+      "has_content": true
+    },
+    {
+      "title": "第130章 沸腾的赌坊",
+      "has_content": true
+    },
+    {
+      "title": "第131章 欢腾！建议",
+      "has_content": true
+    },
+    {
+      "title": "第132章 消息传回，混乱的军城",
+      "has_content": true
+    },
+    {
+      "title": "第133章 日月神宫的长老们",
+      "has_content": true
+    },
+    {
+      "title": "第134章 姜玄与申屠玉",
+      "has_content": true
+    },
+    {
+      "title": "第135章 呵，男人",
+      "has_content": true
+    },
+    {
+      "title": "第136章 修行阵法，裴霓裳出关",
+      "has_content": true
+    },
+    {
+      "title": "第137章 最高级吞源紫府",
+      "has_content": true
+    },
+    {
+      "title": "第138章 抵达军城，裴姑娘的传说",
+      "has_content": true
+    },
+    {
+      "title": "第139章 大机缘",
+      "has_content": true
+    },
+    {
+      "title": "第140章 亲传弟子",
+      "has_content": true
+    },
+    {
+      "title": "第141章 拜师！又要赌？",
+      "has_content": true
+    },
+    {
+      "title": "第142章 吞噬压制九天赤火",
+      "has_content": true
+    },
+    {
+      "title": "第143章 大宴宾客，震撼军城",
+      "has_content": true
+    },
+    {
+      "title": "第144章 心思各异，再次震撼",
+      "has_content": true
+    },
+    {
+      "title": "第145章 裴霓裳的震惊，麻烦了",
+      "has_content": true
+    },
+    {
+      "title": "第146章 空气突然凝固",
+      "has_content": true
+    },
+    {
+      "title": "第147章 说好的断情绝欲呢？",
+      "has_content": true
+    },
+    {
+      "title": "第148章 女人啊",
+      "has_content": true
+    },
+    {
+      "title": "第149章 你打算付出什么？",
+      "has_content": true
+    },
+    {
+      "title": "第150章 短短三年，你敢渡第二劫？",
+      "has_content": true
+    },
+    {
+      "title": "第151章 火热而生疏",
+      "has_content": true
+    },
+    {
+      "title": "第152章 堪比神魔大劫的第二劫",
+      "has_content": true
+    },
+    {
+      "title": "第153章 滔天悲怒，震动全城",
+      "has_content": true
+    },
+    {
+      "title": "第154章 裴霓裳被抓了？",
+      "has_content": true
+    },
+    {
+      "title": "第155章 狂妄挑战神魔的凡人",
+      "has_content": true
+    },
+    {
+      "title": "第156章 万年来最轰动的消息",
+      "has_content": true
+    },
+    {
+      "title": "第157章 不要脸",
+      "has_content": true
+    },
+    {
+      "title": "第158章 斩妖山创造恐怖杀招",
+      "has_content": true
+    },
+    {
+      "title": "第159章 排名与奖励",
+      "has_content": true
+    },
+    {
+      "title": "第160章 穆醉雪归来做的第一件事",
+      "has_content": true
+    },
+    {
+      "title": "第161章 十分离谱的赌注",
+      "has_content": true
+    },
+    {
+      "title": "第162章 我东乾竟有如此天纵奇才",
+      "has_content": true
+    },
+    {
+      "title": "第163章 生死战！瞬杀震撼百万人",
+      "has_content": true
+    },
+    {
+      "title": "第165章 不请我进去吗",
+      "has_content": true
+    },
+    {
+      "title": "第166章 五雷轰顶南宫归",
+      "has_content": true
+    },
+    {
+      "title": "第167章 姜玄绝不敢这么大胆",
+      "has_content": true
+    },
+    {
+      "title": "第168章 那你打算何时与我徒儿成婚？",
+      "has_content": true
+    },
+    {
+      "title": "第169章 婚约？姜玄的杀手锏",
+      "has_content": true
+    },
+    {
+      "title": "第170章 千刀万剐禁术！七年光阴",
+      "has_content": true
+    },
+    {
+      "title": "第171章 极端残忍！他已经忍受了七年",
+      "has_content": true
+    },
+    {
+      "title": "第172章 为什么啊？为了娶你啊",
+      "has_content": true
+    },
+    {
+      "title": "第173章 姜玄的神魔大劫",
+      "has_content": true
+    },
+    {
+      "title": "第174章 神魔姜玄！比十大传承真意更强的真意",
+      "has_content": true
+    },
+    {
+      "title": "第175章 本命真意！姜玄第三次成亲！大婚日",
+      "has_content": true
+    },
+    {
+      "title": "第176章 神庭？不可能！绝对不可能",
+      "has_content": true
+    },
+    {
+      "title": "第177章 欲要当众杀徒的伏逍王",
+      "has_content": true
+    },
+    {
+      "title": "第178章 真正的转世探子！必杀之人",
+      "has_content": true
+    },
+    {
+      "title": "第179章 返回家乡！妖尊亲自下发的任务？",
+      "has_content": true
+    },
+    {
+      "title": "第181章 家乡五年，山中惊变",
+      "has_content": true
+    },
+    {
+      "title": "第182章 对元神法相的猜测，神魔绝技？巫戎陀来袭",
+      "has_content": true
+    },
+    {
+      "title": "第183章 吞噬真意的三种诀窍！找到姜玄了",
+      "has_content": true
+    },
+    {
+      "title": "第184章 姜玄与巫戎陀都惊呆了",
+      "has_content": true
+    },
+    {
+      "title": "第185章 恐怖巫戎陀！绝境！在一往无前中顿悟",
+      "has_content": true
+    },
+    {
+      "title": "第188章 冰火噬龙杀！巫戎陀之死",
+      "has_content": true
+    },
+    {
+      "title": "第190章 前辈，我领悟了元神法相",
+      "has_content": true
+    },
+    {
+      "title": "第192章 消息传开，姜玄活不过今年！穆修的计划",
+      "has_content": true
+    },
+    {
+      "title": "第193章 血引神像！意难平！先天生灵！苏醒",
+      "has_content": true
+    },
+    {
+      "title": "第194章 欺骗成功！岁月！恐怖功勋！初临域外",
+      "has_content": true
+    },
+    {
+      "title": "第195章 八份情报！六劫巡狩的霸道！各凭本事",
+      "has_content": true
+    },
+    {
+      "title": "第196章 姜玄与梦赫士",
+      "has_content": true
+    },
+    {
+      "title": "第197章 他怎么能不戴头盔呢？",
+      "has_content": true
+    },
+    {
+      "title": "第198章 你说啥？你再说一遍？",
+      "has_content": true
+    },
+    {
+      "title": "第199章 价值不止三千亿功勋的奖励",
+      "has_content": true
+    },
+    {
+      "title": "第201章 二劫神魔！掌握十大传承真意",
+      "has_content": true
+    },
+    {
+      "title": "第202章 震撼成长！亏死我了啊！讹他！就讹他",
+      "has_content": true
+    },
+    {
+      "title": "第203章 双面窦小仙！情况恶化！探望！骤变",
+      "has_content": true
+    },
+    {
+      "title": "第204章 拯救的可能！恐怖小念念！目光短浅司徒血宵",
+      "has_content": true
+    },
+    {
+      "title": "第205章 唤醒火魔神？谈妥！一年准备！出发前夕",
+      "has_content": true
+    },
+    {
+      "title": "第206章 妖魔鬼怪烈渊洲！怎么连神经病都有",
+      "has_content": true
+    },
+    {
+      "title": "第207章 翻脸！绝体碑？不会是他",
+      "has_content": true
+    },
+    {
+      "title": "第210章 震撼！再震撼",
+      "has_content": true
+    },
+    {
+      "title": "第212章 王耀夫妻都是什么怪物啊",
+      "has_content": true
+    },
+    {
+      "title": "第213章 巨大收获！远古箱子！火魔神的离谱操作",
+      "has_content": true
+    },
+    {
+      "title": "第214章 浑天火心！让姜玄不敢相信的效果",
+      "has_content": true
+    },
+    {
+      "title": "第215章 九天毁灭焰",
+      "has_content": true
+    },
+    {
+      "title": "第216章 爹？连夺两宝！第一个正式抵达者",
+      "has_content": true
+    },
+    {
+      "title": "第217章 你这辈子都不可能成为天命神魔，你完了",
+      "has_content": true
+    },
+    {
+      "title": "第218章 梁烨发疯",
+      "has_content": true
+    },
+    {
+      "title": "第220章 不可能！绝对不可能",
+      "has_content": true
+    },
+    {
+      "title": "第221章 前辈舍不得我啊？各方邀请！惊变之夜",
+      "has_content": true
+    },
+    {
+      "title": "第222章 惨烈伤亡！念头不通达！诛仙殿神魔",
+      "has_content": true
+    },
+    {
+      "title": "第223章 消息传开！裴小姐被通缉，郡主？找到她",
+      "has_content": true
+    },
+    {
+      "title": "第224章 相认！屏蔽天机三百年！办法！诛仙殿山门",
+      "has_content": true
+    },
+    {
+      "title": "第225章 胜！再打一场？裴沉的记录！进转生神塔",
+      "has_content": true
+    },
+    {
+      "title": "第226章 转生世界！再次掌握十大传承真意！出塔之日",
+      "has_content": true
+    },
+    {
+      "title": "第228章 权力过大的殿灵！灭神殿的谋划",
+      "has_content": true
+    },
+    {
+      "title": "第229章 诛仙大人，九霄神柱，诛仙神兵",
+      "has_content": true
+    },
+    {
+      "title": "第230章 初步认可！难以接受的计划！察觉！",
+      "has_content": true
+    },
+    {
+      "title": "第231章 试探！相交莫逆！你可千万不要让我失望啊！",
+      "has_content": true
+    },
+    {
+      "title": "第232章 舍得！贵有贵的道理！二十五亿域晶啊！",
+      "has_content": true
+    },
+    {
+      "title": "第233章 向大元帅汇报！补偿！收益！诱饵！",
+      "has_content": true
+    },
+    {
+      "title": "第234章 昌奇仙王！祖龙紫藤！恐怖鲁长老！",
+      "has_content": true
+    },
+    {
+      "title": "第235章 恐怖天才！英雄归来！三等皇朝荣耀功勋！",
+      "has_content": true
+    },
+    {
+      "title": "第236章 请大元帅为我造势！震撼天琅星域！",
+      "has_content": true
+    },
+    {
+      "title": "第237章 蜕变！以火重生！超越品级的神魔体！",
+      "has_content": true
+    },
+    {
+      "title": "第240章 陛下的态度！荣耀功勋兑换！",
+      "has_content": true
+    },
+    {
+      "title": "第285章 姜玄与女帝",
+      "has_content": true
+    },
+    {
+      "title": "第310章 小狐狸！你看好了！死尘古矮星！找到他了！",
+      "has_content": true
+    },
+    {
+      "title": "第311章 真给机会！一个威胁七个！不信的蛮天帝！",
+      "has_content": true
+    },
+    {
+      "title": "第322章 杀人！神秘笑容！丢人的父女！鱼钩！",
+      "has_content": true
+    },
+    {
+      "title": "第324章 仙妖乱象！可怕的幕后操纵者！恶魔的低语！",
+      "has_content": true
+    },
+    {
+      "title": "第346章 传告！调遣安排！天魔潮降临！神迹！",
+      "has_content": true
+    },
+    {
+      "title": "第351章 不可思议的神罗大帝！姜玄的计划！",
+      "has_content": true
+    }
+  ]
+}

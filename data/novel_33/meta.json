@@ -1,0 +1,912 @@
+{
+  "title": "萤火之城",
+  "author": "童童",
+  "description": "一段不曾走过的旅途，重新定义了生命的概念。一场从未有过的挑战和进化，开启对生命和情感的思考。“萤火之城”，自由与秩序的对立，自然与科技的统一，这里，窥见未来文明的一角。 ==================================================",
+  "chapters_count": 226,
+  "chapter_titles": [
+    {
+      "title": "第1章 种子",
+      "has_content": true
+    },
+    {
+      "title": "Chapter 1 种子",
+      "has_content": true
+    },
+    {
+      "title": "第2章 会说话的猫",
+      "has_content": true
+    },
+    {
+      "title": "第3章 新手任务",
+      "has_content": true
+    },
+    {
+      "title": "第4章 生联网",
+      "has_content": true
+    },
+    {
+      "title": "第5章 郑睿博士",
+      "has_content": true
+    },
+    {
+      "title": "第6章 冒犯",
+      "has_content": true
+    },
+    {
+      "title": "第7章 话唠医生",
+      "has_content": true
+    },
+    {
+      "title": "第8章 社恐",
+      "has_content": true
+    },
+    {
+      "title": "第9章 不可能完成的任务",
+      "has_content": true
+    },
+    {
+      "title": "第10章 见着真人",
+      "has_content": true
+    },
+    {
+      "title": "第11章 诡夜",
+      "has_content": true
+    },
+    {
+      "title": "第12章 培训",
+      "has_content": true
+    },
+    {
+      "title": "第13章 超级vs绿色",
+      "has_content": true
+    },
+    {
+      "title": "第14章 不懂规矩",
+      "has_content": true
+    },
+    {
+      "title": "第15章 豆腐",
+      "has_content": true
+    },
+    {
+      "title": "第16章 回家",
+      "has_content": true
+    },
+    {
+      "title": "第17章 打破砂锅",
+      "has_content": true
+    },
+    {
+      "title": "第18章 sss",
+      "has_content": true
+    },
+    {
+      "title": "第19章 无能",
+      "has_content": true
+    },
+    {
+      "title": "第20章 太骄傲",
+      "has_content": true
+    },
+    {
+      "title": "第21章 获奖感言",
+      "has_content": true
+    },
+    {
+      "title": "第22章 精神摧残",
+      "has_content": true
+    },
+    {
+      "title": "第23章 破译生命本身",
+      "has_content": true
+    },
+    {
+      "title": "第24章 未来同事",
+      "has_content": true
+    },
+    {
+      "title": "第25章 轮椅先生",
+      "has_content": true
+    },
+    {
+      "title": "第26章 天才基因",
+      "has_content": true
+    },
+    {
+      "title": "第27章 “植物”人",
+      "has_content": true
+    },
+    {
+      "title": "第28章 合法需求",
+      "has_content": true
+    },
+    {
+      "title": "第29章 植物神经污染",
+      "has_content": true
+    },
+    {
+      "title": "第30章 难熬的夜",
+      "has_content": true
+    },
+    {
+      "title": "第31章 不速之客",
+      "has_content": true
+    },
+    {
+      "title": "第32章 入侵",
+      "has_content": true
+    },
+    {
+      "title": "第33章 月球兔",
+      "has_content": true
+    },
+    {
+      "title": "第34章 拒绝",
+      "has_content": true
+    },
+    {
+      "title": "第35章 魔法攻击",
+      "has_content": true
+    },
+    {
+      "title": "第36章 兵荒马乱",
+      "has_content": true
+    },
+    {
+      "title": "第37章 阿尔法孢子",
+      "has_content": true
+    },
+    {
+      "title": "第38章 拯救人类",
+      "has_content": true
+    },
+    {
+      "title": "第39章 当时只道是寻常",
+      "has_content": true
+    },
+    {
+      "title": "第40章 原则",
+      "has_content": true
+    },
+    {
+      "title": "第41章 人只有在举目无亲的地方才能真诚地活着",
+      "has_content": true
+    },
+    {
+      "title": "第42章 线上培训",
+      "has_content": true
+    },
+    {
+      "title": "第43章 醒来",
+      "has_content": true
+    },
+    {
+      "title": "第44章 倒回二十年",
+      "has_content": true
+    },
+    {
+      "title": "第45章 禁闭之门",
+      "has_content": true
+    },
+    {
+      "title": "第46章 又回去了",
+      "has_content": true
+    },
+    {
+      "title": "第47章 外卖",
+      "has_content": true
+    },
+    {
+      "title": "第48章 梦境",
+      "has_content": true
+    },
+    {
+      "title": "第49章 规则",
+      "has_content": true
+    },
+    {
+      "title": "第50章 系统被破坏",
+      "has_content": true
+    },
+    {
+      "title": "第51章 诡异的熟悉",
+      "has_content": true
+    },
+    {
+      "title": "第52章 真实",
+      "has_content": true
+    },
+    {
+      "title": "第53章 需要他的地方",
+      "has_content": true
+    },
+    {
+      "title": "第54章 下决心",
+      "has_content": true
+    },
+    {
+      "title": "第55章 无能狂怒",
+      "has_content": true
+    },
+    {
+      "title": "第56章 惧怕死亡",
+      "has_content": true
+    },
+    {
+      "title": "第57章 注定失败",
+      "has_content": true
+    },
+    {
+      "title": "第58章 热闹",
+      "has_content": true
+    },
+    {
+      "title": "第59章 光脚的",
+      "has_content": true
+    },
+    {
+      "title": "第60章 好了",
+      "has_content": true
+    },
+    {
+      "title": "第61章 没实权",
+      "has_content": true
+    },
+    {
+      "title": "第62章 当好尾巴",
+      "has_content": true
+    },
+    {
+      "title": "第63章 如此平凡",
+      "has_content": true
+    },
+    {
+      "title": "第64章 习惯就好",
+      "has_content": true
+    },
+    {
+      "title": "第65章 大树之下",
+      "has_content": true
+    },
+    {
+      "title": "第66章 学会了一招",
+      "has_content": true
+    },
+    {
+      "title": "第67章 小北",
+      "has_content": true
+    },
+    {
+      "title": "第68章 天机城",
+      "has_content": true
+    },
+    {
+      "title": "第69章 精英商人",
+      "has_content": true
+    },
+    {
+      "title": "第70章 在其位谋其事",
+      "has_content": true
+    },
+    {
+      "title": "第71章 安全范围",
+      "has_content": true
+    },
+    {
+      "title": "第72章 丛长夜露多",
+      "has_content": true
+    },
+    {
+      "title": "第73章 月色深处",
+      "has_content": true
+    },
+    {
+      "title": "第74章 绑定",
+      "has_content": true
+    },
+    {
+      "title": "第75章 宕机",
+      "has_content": true
+    },
+    {
+      "title": "第76章 见证",
+      "has_content": true
+    },
+    {
+      "title": "第77章 没面子",
+      "has_content": true
+    },
+    {
+      "title": "第78章 很狗",
+      "has_content": true
+    },
+    {
+      "title": "第79章 新鲜的晨",
+      "has_content": true
+    },
+    {
+      "title": "第80章 如愿",
+      "has_content": true
+    },
+    {
+      "title": "第81章 弄巧成拙",
+      "has_content": true
+    },
+    {
+      "title": "第82章 专业",
+      "has_content": true
+    },
+    {
+      "title": "第83章 不矜持",
+      "has_content": true
+    },
+    {
+      "title": "第84章 低声下气",
+      "has_content": true
+    },
+    {
+      "title": "第85章 你只是商人",
+      "has_content": true
+    },
+    {
+      "title": "第86章 平易近人",
+      "has_content": true
+    },
+    {
+      "title": "第87章 转正课程",
+      "has_content": true
+    },
+    {
+      "title": "第88章 屡败屡战",
+      "has_content": true
+    },
+    {
+      "title": "第89章 借别处的光",
+      "has_content": true
+    },
+    {
+      "title": "第90章 i人和e人",
+      "has_content": true
+    },
+    {
+      "title": "第91章 山林",
+      "has_content": true
+    },
+    {
+      "title": "第92章 替代",
+      "has_content": true
+    },
+    {
+      "title": "第93章 生生不息",
+      "has_content": true
+    },
+    {
+      "title": "第94章 火炬",
+      "has_content": true
+    },
+    {
+      "title": "第95章 你安排",
+      "has_content": true
+    },
+    {
+      "title": "第96章 旅途",
+      "has_content": true
+    },
+    {
+      "title": "第97章 内向型",
+      "has_content": true
+    },
+    {
+      "title": "第98章 调侃",
+      "has_content": true
+    },
+    {
+      "title": "第99章 不是打趣",
+      "has_content": true
+    },
+    {
+      "title": "第100章 旅游",
+      "has_content": true
+    },
+    {
+      "title": "第101章 糖分超标",
+      "has_content": true
+    },
+    {
+      "title": "第102章 礼物",
+      "has_content": true
+    },
+    {
+      "title": "第103章 变更",
+      "has_content": true
+    },
+    {
+      "title": "第104章 价值",
+      "has_content": true
+    },
+    {
+      "title": "第105章 首次波动",
+      "has_content": true
+    },
+    {
+      "title": "第106章 XM21病毒",
+      "has_content": true
+    },
+    {
+      "title": "第107章 相似",
+      "has_content": true
+    },
+    {
+      "title": "第108章 和解",
+      "has_content": true
+    },
+    {
+      "title": "第109章 难得",
+      "has_content": true
+    },
+    {
+      "title": "第110章 知来者之可追",
+      "has_content": true
+    },
+    {
+      "title": "第111章 卑微",
+      "has_content": true
+    },
+    {
+      "title": "第112章 触发升级",
+      "has_content": true
+    },
+    {
+      "title": "第113章 越权",
+      "has_content": true
+    },
+    {
+      "title": "第114章 BUG",
+      "has_content": true
+    },
+    {
+      "title": "第115章 和谐共处",
+      "has_content": true
+    },
+    {
+      "title": "第116章 神速",
+      "has_content": true
+    },
+    {
+      "title": "第117章 科学有罪",
+      "has_content": true
+    },
+    {
+      "title": "第118章 寻觅",
+      "has_content": true
+    },
+    {
+      "title": "第119章 敬畏心",
+      "has_content": true
+    },
+    {
+      "title": "第120章 把她当成亲生的",
+      "has_content": true
+    },
+    {
+      "title": "第121章 中秋夜",
+      "has_content": true
+    },
+    {
+      "title": "第122章 等雪",
+      "has_content": true
+    },
+    {
+      "title": "第123章 陪伴",
+      "has_content": true
+    },
+    {
+      "title": "第124章 美梦",
+      "has_content": true
+    },
+    {
+      "title": "第125章 战友",
+      "has_content": true
+    },
+    {
+      "title": "第126章 大自然法则",
+      "has_content": true
+    },
+    {
+      "title": "第127章 失踪",
+      "has_content": true
+    },
+    {
+      "title": "第128章 赛博派",
+      "has_content": true
+    },
+    {
+      "title": "第129章 异端",
+      "has_content": true
+    },
+    {
+      "title": "第130章 被标识",
+      "has_content": true
+    },
+    {
+      "title": "第131章 植物怪",
+      "has_content": true
+    },
+    {
+      "title": "第132章 情感支撑",
+      "has_content": true
+    },
+    {
+      "title": "第133章 茶水间",
+      "has_content": true
+    },
+    {
+      "title": "第134章 成精",
+      "has_content": true
+    },
+    {
+      "title": "第135章 谁是内鬼",
+      "has_content": true
+    },
+    {
+      "title": "第136章 是谁",
+      "has_content": true
+    },
+    {
+      "title": "第137章 情绪没问题",
+      "has_content": true
+    },
+    {
+      "title": "第138章 朋友",
+      "has_content": true
+    },
+    {
+      "title": "第139章 精神状态健美",
+      "has_content": true
+    },
+    {
+      "title": "第140章 生命数字",
+      "has_content": true
+    },
+    {
+      "title": "第141章 清除成功",
+      "has_content": true
+    },
+    {
+      "title": "第142章 探病",
+      "has_content": true
+    },
+    {
+      "title": "第143章 心软",
+      "has_content": true
+    },
+    {
+      "title": "第144章 该被淘汰的稀罕物",
+      "has_content": true
+    },
+    {
+      "title": "第145章 传递",
+      "has_content": true
+    },
+    {
+      "title": "第146章 求偶",
+      "has_content": true
+    },
+    {
+      "title": "第147章 法律意义的家人",
+      "has_content": true
+    },
+    {
+      "title": "第148章 调查",
+      "has_content": true
+    },
+    {
+      "title": "第149章 死了",
+      "has_content": true
+    },
+    {
+      "title": "第150章 古怪",
+      "has_content": true
+    },
+    {
+      "title": "第151章 怪胎",
+      "has_content": true
+    },
+    {
+      "title": "第152章 篡改",
+      "has_content": true
+    },
+    {
+      "title": "第153章 童言无忌",
+      "has_content": true
+    },
+    {
+      "title": "第154章 从泥土到星辰",
+      "has_content": true
+    },
+    {
+      "title": "第155章 再遇",
+      "has_content": true
+    },
+    {
+      "title": "第156章 超自然",
+      "has_content": true
+    },
+    {
+      "title": "第157章 对猫没用",
+      "has_content": true
+    },
+    {
+      "title": "第158章 用进废退",
+      "has_content": true
+    },
+    {
+      "title": "第159章 双重死亡",
+      "has_content": true
+    },
+    {
+      "title": "第160章 罕见",
+      "has_content": true
+    },
+    {
+      "title": "第161章 不知道",
+      "has_content": true
+    },
+    {
+      "title": "第162章 不感症",
+      "has_content": true
+    },
+    {
+      "title": "第163章 安全问题",
+      "has_content": true
+    },
+    {
+      "title": "第164章 不配",
+      "has_content": true
+    },
+    {
+      "title": "第165章 自由的",
+      "has_content": true
+    },
+    {
+      "title": "第166章 强行转院",
+      "has_content": true
+    },
+    {
+      "title": "第167章 愧疚",
+      "has_content": true
+    },
+    {
+      "title": "第168章 宠坏",
+      "has_content": true
+    },
+    {
+      "title": "第169章 金色种子",
+      "has_content": true
+    },
+    {
+      "title": "第170章 遗世独立",
+      "has_content": true
+    },
+    {
+      "title": "第171章 养料",
+      "has_content": true
+    },
+    {
+      "title": "第172章 福祸相依",
+      "has_content": true
+    },
+    {
+      "title": "第173章 对拉",
+      "has_content": true
+    },
+    {
+      "title": "第174章 万里挑一的普通人",
+      "has_content": true
+    },
+    {
+      "title": "第175章 没有秘密",
+      "has_content": true
+    },
+    {
+      "title": "第176章 玄学",
+      "has_content": true
+    },
+    {
+      "title": "第177章 出园",
+      "has_content": true
+    },
+    {
+      "title": "第178章 异常",
+      "has_content": true
+    },
+    {
+      "title": "第179章 清楚",
+      "has_content": true
+    },
+    {
+      "title": "第180章 体验",
+      "has_content": true
+    },
+    {
+      "title": "第181章 情感之门",
+      "has_content": true
+    },
+    {
+      "title": "第182章 寄生种",
+      "has_content": true
+    },
+    {
+      "title": "第183章 绝望",
+      "has_content": true
+    },
+    {
+      "title": "第184章 植物的快乐",
+      "has_content": true
+    },
+    {
+      "title": "第185章 因祸得福",
+      "has_content": true
+    },
+    {
+      "title": "第186章 第四关",
+      "has_content": true
+    },
+    {
+      "title": "第187章 方生方死",
+      "has_content": true
+    },
+    {
+      "title": "第188章 活过来",
+      "has_content": true
+    },
+    {
+      "title": "第189章 月之暗面",
+      "has_content": true
+    },
+    {
+      "title": "第190章 无人监管区",
+      "has_content": true
+    },
+    {
+      "title": "第191章 月球人",
+      "has_content": true
+    },
+    {
+      "title": "第192章 新长安",
+      "has_content": true
+    },
+    {
+      "title": "第193章 原谅",
+      "has_content": true
+    },
+    {
+      "title": "第194章 回看",
+      "has_content": true
+    },
+    {
+      "title": "第195章 秘密的钥匙",
+      "has_content": true
+    },
+    {
+      "title": "第196章 负荆请罪",
+      "has_content": true
+    },
+    {
+      "title": "第197章 奇迹",
+      "has_content": true
+    },
+    {
+      "title": "第198章 创生",
+      "has_content": true
+    },
+    {
+      "title": "第199章 衰老",
+      "has_content": true
+    },
+    {
+      "title": "第200章 爱之深",
+      "has_content": true
+    },
+    {
+      "title": "第201章 还有你",
+      "has_content": true
+    },
+    {
+      "title": "第202章 定海神针",
+      "has_content": true
+    },
+    {
+      "title": "第203章 银杏开口",
+      "has_content": true
+    },
+    {
+      "title": "第204章 我是郑睿",
+      "has_content": true
+    },
+    {
+      "title": "第205章 幻幻真真",
+      "has_content": true
+    },
+    {
+      "title": "第206章 逃不掉",
+      "has_content": true
+    },
+    {
+      "title": "第207章 怪物",
+      "has_content": true
+    },
+    {
+      "title": "第208章 无法抵达",
+      "has_content": true
+    },
+    {
+      "title": "第209章 废物",
+      "has_content": true
+    },
+    {
+      "title": "第210章 剥离",
+      "has_content": true
+    },
+    {
+      "title": "第211章 一",
+      "has_content": true
+    },
+    {
+      "title": "第212章 残冬",
+      "has_content": true
+    },
+    {
+      "title": "第213章 可以埋了",
+      "has_content": true
+    },
+    {
+      "title": "第214章 真正的恐惧",
+      "has_content": true
+    },
+    {
+      "title": "第215章 被发现",
+      "has_content": true
+    },
+    {
+      "title": "第216章 祖宗来了",
+      "has_content": true
+    },
+    {
+      "title": "第217章 地月之行",
+      "has_content": true
+    },
+    {
+      "title": "第218章 最终关卡",
+      "has_content": true
+    },
+    {
+      "title": "第219章 生命的本质",
+      "has_content": true
+    },
+    {
+      "title": "第220章 明月之上",
+      "has_content": true
+    },
+    {
+      "title": "第221章 非法闯入",
+      "has_content": true
+    },
+    {
+      "title": "第222章 特别邀请函",
+      "has_content": true
+    },
+    {
+      "title": "第223章 入场",
+      "has_content": true
+    },
+    {
+      "title": "第224章 胜负已定",
+      "has_content": true
+    },
+    {
+      "title": "第225章 无名之人",
+      "has_content": true
+    }
+  ]
+}
