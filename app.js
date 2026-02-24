@@ -468,6 +468,24 @@ function updateGiscusTerm() {
                 }
             }
         }, 'https://giscus.app');
+    } else {
+        // 如果 iframe 还没加载，等待加载完成后发送消息
+        const checkInterval = setInterval(() => {
+            const frame = document.querySelector('iframe.giscus-frame');
+            if (frame) {
+                clearInterval(checkInterval);
+                frame.contentWindow.postMessage({
+                    giscus: {
+                        setConfig: {
+                            term: term
+                        }
+                    }
+                }, 'https://giscus.app');
+            }
+        }, 100);
+
+        // 5秒后停止检查，避免无限循环
+        setTimeout(() => clearInterval(checkInterval), 5000);
     }
 }
 
