@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <!-- 主页 -->
+    <url>
+        <loc>https://halei0v0.github.io/Novelreader/</loc>
+        <lastmod>2026-02-25</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>1.0</priority>
+    </url>
+    
+    <!-- 阅读器页面 -->
+    <url>
+        <loc>https://halei0v0.github.io/Novelreader/reader.html</loc>
+        <lastmod>2026-02-25</lastmod>
+        <changefreq>daily</changefreq>
+        <priority>0.8</priority>
+    </url>
+</urlset>

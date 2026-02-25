@@ -3,7 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>小说阅读器【Novelreader】</title>
+    <title>小说阅读器【Novelreader】 - 在线阅读各类小说</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="小说阅读器【Novelreader】提供海量在线小说阅读服务，包括玄幻、都市、科幻等各类题材。支持阅读进度自动保存，阅读体验流畅。">
+    <meta name="keywords" content="小说阅读器,在线小说,免费小说,玄幻小说,都市小说,网络小说,小说阅读">
+    <meta name="author" content="halei0v0">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="小说阅读器【Novelreader】">
+    <meta property="og:description" content="提供海量在线小说阅读服务，支持阅读进度自动保存，阅读体验流畅。">
+    <meta property="og:image" content="">
+    <meta property="og:url" content="">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="小说阅读器【Novelreader】">
+    <meta name="twitter:description" content="提供海量在线小说阅读服务，支持阅读进度自动保存，阅读体验流畅。">
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -38,6 +56,50 @@
                     </button>
                 </div>
                 <div class="search-info" id="search-info"></div>
+            </div>
+
+            <!-- 分类筛选 -->
+            <div class="category-container mb-4" id="category-container">
+                <!-- 分类按钮动态加载 -->
+            </div>
+
+            <!-- 功能按钮 -->
+            <div class="feature-buttons mb-4">
+                <button class="feature-btn" onclick="showRanking('hot')">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M8 13A5 5 0 1 1 8 3a5 5 0 0 1 0 10zm0 1A6 6 0 1 0 8 2a6 6 0 0 0 0 12z"/>
+                        <path d="M8 11A3 3 0 1 1 8 5a3 3 0 0 1 0 6zm0 1A4 4 0 1 0 8 4a4 4 0 0 0 0 8z"/>
+                        <path d="M9.5 8a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
+                    </svg>
+                    排行榜
+                </button>
+                <button class="feature-btn" onclick="randomRecommend()">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M6.271 5.055a.5.5 0 0 1 .52.038l3.5 2.5a.5.5 0 0 1 0 .814l-3.5 2.5A.5.5 0 0 1 6 10.5v-5a.5.5 0 0 1 .271-.445z"/>
+                    </svg>
+                    随机推荐
+                </button>
+                <button class="feature-btn" onclick="showFavoritesOnly()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="heart-icon">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                    我的收藏
+                </button>
+                <button class="feature-btn" onclick="showReadingStats()">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M1 11a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3zm5-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7zm5-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1V2z"/>
+                    </svg>
+                    阅读统计
+                </button>
+                <button class="feature-btn" onclick="showAboutPage()">
+                    <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                        <path d="M5.255 5.786a.237.237 0 0 0 .241.247h.825c.138 0 .248-.113.266-.25.09-.656.54-1.134 1.342-1.134.686 0 1.314.343 1.314 1.168 0 .635-.374.927-.965 1.371-.673.489-1.206 1.06-1.168 1.987l.003.217a.25.25 0 0 0 .25.246h.811a.25.25 0 0 0 .25-.25v-.105c0-.718.273-.927 1.01-1.486.609-.463 1.244-.977 1.244-2.056 0-1.511-1.276-2.241-2.673-2.241-1.267 0-2.655.59-2.75 2.286zm1.557 5.763c0 .533.425.927 1.01.927.609 0 1.028-.394 1.028-.927 0-.552-.42-.94-1.029-.94-.584 0-1.009.388-1.009.94z"/>
+                    </svg>
+                    关于
+                </button>
             </div>
 
             <!-- 阅读历史 -->
@@ -83,6 +145,14 @@
     <script>
         // 加载小说列表
         loadNovelList();
+        
+        // 等待小说数据加载完成后添加分类
+        setTimeout(() => {
+            if (allNovelsMeta) {
+                addCategoriesToNovels();
+                renderCategoryButtons();
+            }
+        }, 500);
     </script>
 </body>
 </html>
