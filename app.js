@@ -6,8 +6,8 @@ let currentChapterIndex = 0;
 
 // 章节块缓存（用于按需加载）- 使用 LRU 缓存策略
 let chapterCache = {};  // { novelId: { chunkIndex: chaptersData } }
-let chunkSize = 100;  // 每个块的章节数
-const MAX_CACHE_SIZE = 5;  // 最大缓存 chunk 数量（防止内存泄漏）
+let chunkSize = 50;  // 每个块的章节数（调整为50章，约500KB，加载更快）
+const MAX_CACHE_SIZE = 15;  // 最大缓存 chunk 数量（增加到15个，覆盖750章）
 let cacheAccessOrder = [];  // 缓存访问顺序 [novelId_chunkIndex, ...]
 let isLoadingChapter = false;  // 加载状态，防止并发请求
 
@@ -132,11 +132,62 @@ async function loadChapterChunk(novelId, chunkIndex) {
             }
         }
 
+        // 预加载相邻的 chunk（不阻塞当前操作）
+        prefetchAdjacentChunks(novelId, chunkIndex);
+
         return chunkData.chapters;
     } catch (error) {
         console.error('加载章节块失败:', error);
         return null;
     }
+}
+
+// 预加载相邻的 chunk（后台静默加载）
+function prefetchAdjacentChunks(novelId, currentChunkIndex) {
+    const adjacentChunks = [currentChunkIndex - 1, currentChunkIndex + 1];
+
+    adjacentChunks.forEach(chunkIndex => {
+        if (chunkIndex < 0) return; // 不预加载负索引
+
+        const cacheKey = `${novelId}_${chunkIndex}`;
+
+        // 检查是否已缓存
+        if (!chapterCache[novelId] || !chapterCache[novelId][chunkIndex]) {
+            // 后台静默加载，不阻塞
+            fetch(`data/${novelId}/chunk_${chunkIndex}.json`)
+                .then(response => response.json())
+                .then(chunkData => {
+                    if (!chapterCache[novelId]) {
+                        chapterCache[novelId] = {};
+                    }
+                    chapterCache[novelId][chunkIndex] = chunkData.chapters;
+
+                    // 添加到访问顺序
+                    const accessIndex = cacheAccessOrder.indexOf(cacheKey);
+                    if (accessIndex !== -1) {
+                        cacheAccessOrder.splice(accessIndex, 1);
+                    }
+                    cacheAccessOrder.push(cacheKey);
+
+                    // 检查缓存限制
+                    while (cacheAccessOrder.length > MAX_CACHE_SIZE) {
+                        const oldestKey = cacheAccessOrder.shift();
+                        const [oldNovelId, oldChunkIndex] = oldestKey.split('_');
+                        if (chapterCache[oldNovelId] && chapterCache[oldNovelId][oldChunkIndex]) {
+                            delete chapterCache[oldNovelId][oldChunkIndex];
+                            if (Object.keys(chapterCache[oldNovelId]).length === 0) {
+                                delete chapterCache[oldNovelId];
+                            }
+                        }
+                    }
+
+                    console.log(`预加载完成: ${cacheKey}`);
+                })
+                .catch(error => {
+                    console.warn(`预加载失败: ${cacheKey}`, error);
+                });
+        }
+    });
 }
 
 // 加载单个章节内容
@@ -623,22 +674,26 @@ async function nextChapter() {
 // 加载目录
 function loadTOC() {
     const tocList = document.getElementById('toc-list');
-    
-    // 只渲染前100章（虚拟滚动的基础）
-    const renderCount = Math.min(currentNovel.chapters_count, 100);
-    
+
+    // 根据章节总数决定单次渲染数量，优化体验
+    const batchSize = currentNovel.chapters_count > 2000 ? 500 : 300;
+    const renderCount = Math.min(currentNovel.chapters_count, batchSize);
+
+    // 初始化渲染计数
+    renderedTOCCount = renderCount;
+
     tocList.innerHTML = currentNovel.chapter_titles.slice(0, renderCount).map((chapterInfo, index) => {
         // 检测是否为卷标题
         const isVolume = !chapterInfo.has_content || chapterInfo.title.includes('卷');
         const className = isVolume ? 'toc-item toc-volume' : 'toc-item';
-        
+
         return `
             <div class="${className}" data-index="${index}" onclick="jumpToChapter(${index})">
                 ${escapeHtml(chapterInfo.title)}
             </div>
         `;
     }).join('');
-    
+
     // 如果还有更多章节，添加一个"加载更多"按钮
     if (currentNovel.chapters_count > renderCount) {
         const loadMoreBtn = document.createElement('div');
@@ -653,7 +708,7 @@ function loadTOC() {
 function filterChapters() {
     const searchInput = document.getElementById('toc-search').value.toLowerCase();
     const items = document.querySelectorAll('.toc-item');
-    
+
     items.forEach(item => {
         const title = item.textContent.toLowerCase();
         if (title.includes(searchInput)) {
@@ -665,18 +720,19 @@ function filterChapters() {
 }
 
 // 加载更多目录项
-let renderedTOCCount = 100;
+let renderedTOCCount = 300; // 初始渲染数量与 loadTOC 保持一致
 function loadMoreTOC() {
     const tocList = document.getElementById('toc-list');
     const loadMoreBtn = tocList.querySelector('.toc-load-more');
-    
+
     // 移除"加载更多"按钮
     if (loadMoreBtn) {
         loadMoreBtn.remove();
     }
-    
-    // 渲染更多章节
-    const newCount = Math.min(renderedTOCCount + 100, currentNovel.chapters_count);
+
+    // 根据章节总数决定每次加载的数量
+    const batchSize = currentNovel.chapters_count > 2000 ? 500 : 300;
+    const newCount = Math.min(renderedTOCCount + batchSize, currentNovel.chapters_count);
     
     for (let i = renderedTOCCount; i < newCount; i++) {
         const chapterInfo = currentNovel.chapter_titles[i];
