@@ -363,6 +363,9 @@ async function initReader() {
     currentNovel = novelMeta;
     currentChapterIndex = info.chapterIndex;
 
+    // 动态加载 giscus 脚本
+    loadGiscus();
+
     // 加载阅读设置
     loadSettings();
 
@@ -508,8 +511,13 @@ async function loadChapter(index) {
         // 更新书签按钮状态
         updateBookmarkButton();
 
-        // 更新 giscus 评论区
+        // 更新 giscus 评论主题
         updateGiscusTerm();
+
+        // 更新 URL，确保 giscus 能识别不同章节
+        const novelId = getCurrentNovelId();
+        const newUrl = `reader.html?novel=${novelId}&chapter=${index}`;
+        window.history.replaceState({ chapter: index }, '', newUrl);
 
         // 停止旧的计时器并启动新的计时器
         stopReadingTimer();
@@ -530,44 +538,50 @@ async function loadChapter(index) {
     }
 }
 
-// 更新 giscus 评论区的 discussion term
-function updateGiscusTerm() {
-    const novelTitle = currentNovel.title;
-    const chapterTitleInfo = currentNovel.chapter_titles[currentChapterIndex];
-    const chapterTitle = chapterTitleInfo ? chapterTitleInfo.title : `第 ${currentChapterIndex + 1} 章`;
+// 动态加载 giscus 脚本
+function loadGiscus() {
+    const novelId = getCurrentNovelId();
+    const chapterIndex = currentChapterIndex;
 
-    // 设置为 "小说标题-章节标题" 格式
-    const term = `${novelTitle}-${chapterTitle}`;
+    // 使用 "小说ID_章节索引" 格式作为 term
+    const term = `${novelId}_chapter_${chapterIndex}`;
 
-    // 发送消息更新 giscus
-    const giscusFrame = document.querySelector('iframe.giscus-frame');
-    if (giscusFrame) {
-        giscusFrame.contentWindow.postMessage({
-            giscus: {
-                setConfig: {
-                    term: term
-                }
-            }
-        }, 'https://giscus.app');
-    } else {
-        // 如果 iframe 还没加载，等待加载完成后发送消息
-        const checkInterval = setInterval(() => {
-            const frame = document.querySelector('iframe.giscus-frame');
-            if (frame) {
-                clearInterval(checkInterval);
-                frame.contentWindow.postMessage({
-                    giscus: {
-                        setConfig: {
-                            term: term
-                        }
-                    }
-                }, 'https://giscus.app');
-            }
-        }, 100);
+    console.log('加载 giscus，term:', term, 'novelId:', novelId, 'chapterIndex:', chapterIndex);
 
-        // 5秒后停止检查，避免无限循环
-        setTimeout(() => clearInterval(checkInterval), 5000);
+    const giscusContainer = document.getElementById('giscus-container');
+    if (!giscusContainer) {
+        console.error('giscus-container 元素未找到');
+        return;
     }
+
+    // 创建 giscus 脚本元素
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.setAttribute('data-repo', 'halei0v0/Novelreader');
+    script.setAttribute('data-repo-id', 'R_kgDORMt8LA');
+    script.setAttribute('data-category', 'Show and tell');
+    script.setAttribute('data-category-id', 'DIC_kwDORMt8LM4C3GS-');
+    script.setAttribute('data-mapping', 'specific');
+    script.setAttribute('data-term', term);
+    script.setAttribute('data-strict', '0');
+    script.setAttribute('data-reactions-enabled', '1');
+    script.setAttribute('data-emit-metadata', '0');
+    script.setAttribute('data-input-position', 'top');
+    script.setAttribute('data-theme', 'preferred_color_scheme');
+    script.setAttribute('data-lang', 'zh-CN');
+    script.setAttribute('data-loading', 'eager');
+    script.setAttribute('crossorigin', 'anonymous');
+    script.async = true;
+
+    // 插入脚本
+    giscusContainer.innerHTML = '';
+    giscusContainer.appendChild(script);
+}
+
+// 更新 giscus 评论主题
+function updateGiscusTerm() {
+    console.log('重新加载 giscus 脚本');
+    loadGiscus();
 }
 
 // 上一章

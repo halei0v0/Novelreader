@@ -606,7 +606,7 @@ body {
     padding: 20px 20px 100px;
     color: var(--reader-text);
     line-height: 1.8;
-    font-size: 16px;
+    /* 移除固定的 font-size，让 JavaScript 动态控制 */
     word-wrap: break-word;
     overflow-wrap: break-word;
 }
@@ -916,15 +916,6 @@ body {
         font-size: 2rem;
     }
     
-    .novel-cover {
-        height: 160px;
-        font-size: 3rem;
-    }
-    
-    .novel-title {
-        font-size: 1.1rem;
-    }
-    
     .chapter-header h2 {
         font-size: 1.4rem;
     }
@@ -936,7 +927,7 @@ body {
     
     .reader-content {
         padding: 15px 15px 80px;
-        font-size: 15px;
+        /* 移除固定的 font-size，让 JavaScript 动态控制 */
         /* 优化触摸体验 */
         -webkit-tap-highlight-color: transparent;
         user-select: none;
@@ -1011,6 +1002,89 @@ body {
         width: 100%;
         height: auto;
         min-height: 400px;
+    }
+    
+    /* 分类按钮移动端优化 */
+    .category-container {
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .category-btn {
+        padding: 6px 16px;
+        font-size: 0.85rem;
+        border-radius: 18px;
+    }
+    
+    /* 功能按钮移动端优化 */
+    .feature-buttons {
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+    
+    .feature-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+        border-radius: 18px;
+        gap: 6px;
+    }
+    
+    .feature-btn svg {
+        width: 16px;
+        height: 16px;
+    }
+    
+    /* 小说卡片移动端优化 */
+    .novel-card {
+        margin-bottom: 15px;
+    }
+    
+    .novel-cover {
+        height: 140px;
+        font-size: 2.5rem;
+    }
+    
+    .novel-info {
+        padding: 15px;
+    }
+    
+    .novel-title {
+        font-size: 1rem;
+    }
+    
+    .novel-author {
+        font-size: 0.85rem;
+    }
+    
+    .novel-description {
+        font-size: 0.85rem;
+    }
+    
+    /* 阅读历史移动端优化 */
+    .history-item {
+        padding: 12px;
+    }
+    
+    .history-item-title {
+        font-size: 1rem;
+    }
+    
+    .history-item-author {
+        font-size: 0.8rem;
+    }
+    
+    /* 搜索框移动端优化 */
+    .search-container {
+        margin-bottom: 20px;
+    }
+    
+    .search-box input {
+        padding: 10px 15px;
+        font-size: 0.95rem;
+    }
+    
+    .search-btn {
+        padding: 10px 15px;
     }
 }
 
@@ -1335,12 +1409,14 @@ body {
     background: var(--card-bg);
     border-radius: 12px;
     border: 1px solid var(--border-color);
+    min-height: 300px;
 }
 
 /* giscus iframe 自适应 */
 .giscus-container iframe {
     width: 100%;
     border-radius: 8px;
+    min-height: 400px;
 }
 
 /* 暗黑模式下的 giscus 容器 */
